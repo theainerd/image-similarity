@@ -10,13 +10,20 @@ from keras import regularizers, optimizers
 import pandas as pd
 import numpy as np
 
-
-
+# # import comet_ml in the top of your file
+# from comet_ml import Experiment
+#
+# Add the following code anywhere in your machine learning file
+# experiment = Experiment(api_key="",
+#                         project_name="fashion-object-detection")
+#
 experiment_name = "image-similarity"
 # import data
 traindf = pd.read_csv("../data/category_data.csv")
+traindf['id'] = "../data/" + traindf['id']
 
 target_labels = traindf['label']
+
 
 labels_ohe_names = pd.get_dummies(target_labels, sparse=True)
 labels_ohe = np.asarray(labels_ohe_names)
@@ -25,10 +32,10 @@ print(labels_ohe.shape)
 train_data = np.array([img_to_array(load_img(img,target_size=(299, 299))
                        ) for img in traindf['id'].values.tolist()]).astype('float32')
 
-print(train_data.shape)
+print("Train data shape is: " + train_data.shape)
 
-x_train, x_val, y_train, y_val = train_test_split(x_train,
-                                                    y_train,
+x_train, x_val, y_train, y_val = train_test_split(train_data,
+                                                    target_labels,
                                                     test_size=0.15,
                                                     stratify=np.array(y_train),
                                                     random_state=42)
@@ -109,7 +116,7 @@ model.fit_generator(generator=train_generator,
                     steps_per_epoch=STEP_SIZE_TRAIN,
                     validation_data=valid_generator,
                     validation_steps=STEP_SIZE_VALID,
-                    epochs=10
+                    epochs=20
 )
 
 model.evaluate_generator(generator=valid_generator)
@@ -148,7 +155,7 @@ model.fit_generator(generator=train_generator,
                     steps_per_epoch=STEP_SIZE_TRAIN,
                     validation_data=valid_generator,
                     validation_steps=STEP_SIZE_VALID,
-                    epochs=10,
+                    epochs=20,
                     callbacks=[mc_fit, tb]
 )
 
