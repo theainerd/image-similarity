@@ -23,7 +23,7 @@ labels_ohe = np.asarray(labels_ohe_names)
 print(labels_ohe.shape)
 
 train_data = np.array([img_to_array(load_img(img,target_size=(299, 299))
-                       ) for img in data_labels['image_path'].values.tolist()]).astype('float32')
+                       ) for img in traindf['image_path'].values.tolist()]).astype('float32')
 
 print(train_data.shape)
 
