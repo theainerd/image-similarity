@@ -1,19 +1,44 @@
 import pandas as pd
 import numpy as np
-
-from keras.models import Model
+from keras.models import Model,Sequential
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization
 from keras.applications.inception_v3 import InceptionV3
+from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
 from keras.layers import Conv2D, MaxPooling2D
 from keras import regularizers, optimizers
 import pandas as pd
 import numpy as np
 
+
+
 experiment_name = "image-similarity"
 # import data
 traindf = pd.read_csv("../data/category_data.csv")
-output_models_dir = "../snapshots/top_layers"
+
+target_labels = data_labels['label']
+
+labels_ohe_names = pd.get_dummies(target_labels, sparse=True)
+labels_ohe = np.asarray(labels_ohe_names)
+print(labels_ohe.shape)
+
+train_data = np.array([img_to_array(load_img(img,target_size=(299, 299))
+                       ) for img in data_labels['image_path'].values.tolist()]).astype('float32')
+
+print(train_data.shape)
+
+x_train, x_val, y_train, y_val = train_test_split(x_train,
+                                                    y_train,
+                                                    test_size=0.15,
+                                                    stratify=np.array(y_train),
+                                                    random_state=42)
+
+y_train_ohe = pd.get_dummies(y_train.reset_index(drop=True)).as_matrix()
+y_val_ohe = pd.get_dummies(y_val.reset_index(drop=True)).as_matrix()
+
+BATCH_SIZE = 32
+
+
 final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
 
 top_layers_checkpoint_path = "../snapshots/top_layers"
@@ -24,32 +49,21 @@ datagen=ImageDataGenerator(rescale=1./255.,
         shear_range=0.2,
         zoom_range=0.5,
         width_shift_range=0.5,
-        horizontal_flip=True,validation_split=0.10)
-
-train_generator=datagen.flow_from_dataframe(
-dataframe=traindf,
-directory="../data/img/",
-x_col="id",
-y_col="label",
-subset="training",
-batch_size=2,
-seed=42,
-shuffle=True,
-class_mode="categorical",
-target_size=(32,32))
+        horizontal_flip =True)
 
 
-valid_generator=datagen.flow_from_dataframe(
-dataframe=traindf,
-directory="../data/img/",
-x_col="id",
-y_col="label",
-subset="validation",
-batch_size=2,
-seed=42,
-shuffle=True,
-class_mode="categorical",
-target_size=(32,32))
+# Create train generator.
+train_datagen = ImageDataGenerator(rescale=1./255,
+                                   rotation_range=30,
+                                   width_shift_range=0.2,
+                                   height_shift_range=0.2,
+                                   horizontal_flip = 'true')
+
+train_generator = train_datagen.flow(x_train, y_train_ohe, shuffle=False, batch_size=BATCH_SIZE, seed=1)
+
+# Create validation generator
+val_datagen = ImageDataGenerator(rescale = 1./255)
+val_generator = train_datagen.flow(x_val, y_val_ohe, shuffle=False, batch_size=BATCH_SIZE, seed=1)
 
 base_model = InceptionV3(weights='imagenet', include_top=False)
 
@@ -99,7 +113,7 @@ model.fit_generator(generator=train_generator,
 )
 
 model.evaluate_generator(generator=valid_generator)
-model.save
+
 if os.path.exists(fine_tuned_checkpoint_path):
 	model.load_weights(fine_tuned_checkpoint_path)
 	print ("Checkpoint '" + fine_tuned_checkpoint_path + "' loaded.")
