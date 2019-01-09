@@ -10,14 +10,15 @@ from keras import regularizers, optimizers
 import pandas as pd
 import numpy as np
 
+experiment_name = "image-similarity"
 # import data
-traindf = pd.read_csv("../data/category_data.csv",dtype=str)
+traindf = pd.read_csv("../data/category_data.csv")
+output_models_dir = "../snapshots/top_layers"
+final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
 
-
-top_layers_checkpoint_path = 'cp.top.best.hdf5'
-fine_tuned_checkpoint_path = 'cp.fine_tuned.best.hdf5'
-new_extended_inception_weights = 'final_weights.hdf5'
-
+top_layers_checkpoint_path = "../snapshots/top_layers"
+fine_tuned_checkpoint_path = "../snapshots/fine_tuned"
+new_extended_inception_weights = "../snapshots/final"
 
 datagen=ImageDataGenerator(rescale=1./255.,
         shear_range=0.2,
@@ -53,7 +54,6 @@ target_size=(32,32))
 base_model = InceptionV3(weights='imagenet', include_top=False)
 
 
-
 # add a global spatial average pooling layer
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
@@ -61,6 +61,7 @@ x = GlobalAveragePooling2D()(x)
 x = Dense(1024, activation='relu')(x)
 # and a logistic layer -- we have 2 classes
 predictions = Dense(46, activation='softmax')(x)
+
 
 # this is the model we will train
 model = Model(input=base_model.input, output=predictions)
@@ -76,12 +77,17 @@ for layer in base_model.layers:
 
 # compile the model (should be done *after* setting layers to non-trainable)
 
-model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'], )
+model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+##############################y code
+
+filepath= top_layers_checkpoint_path + experiment_name + "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
+##############################y code
 #Save the model after every epoch.
-mc_top = ModelCheckpoint(top_layers_checkpoint_path, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
+mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
 
 #Save the TensorBoard logs.
 tb = TensorBoard(log_dir='./logs', histogram_freq=1, write_graph=True, write_images=True)
+
 
 STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
 STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
@@ -93,13 +99,14 @@ model.fit_generator(generator=train_generator,
 )
 
 model.evaluate_generator(generator=valid_generator)
-
+model.save
 if os.path.exists(fine_tuned_checkpoint_path):
 	model.load_weights(fine_tuned_checkpoint_path)
 	print ("Checkpoint '" + fine_tuned_checkpoint_path + "' loaded.")
 
+filepath1 = fine_tuned_checkpoint_path + experiment_name + "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
 #Save the model after every epoch.
-mc_fit = ModelCheckpoint(fine_tuned_checkpoint_path, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
+mc_fit = ModelCheckpoint(filepath1, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
 
 
 if os.path.exists(fine_tuned_checkpoint_path):
