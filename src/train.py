@@ -16,7 +16,7 @@ experiment_name = "image-similarity"
 # import data
 traindf = pd.read_csv("../data/category_data.csv")
 
-target_labels = data_labels['label']
+target_labels = traindf['label']
 
 labels_ohe_names = pd.get_dummies(target_labels, sparse=True)
 labels_ohe = np.asarray(labels_ohe_names)
