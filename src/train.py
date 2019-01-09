@@ -60,7 +60,7 @@ x = GlobalAveragePooling2D()(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
 # and a logistic layer -- we have 2 classes
-predictions = Dense(2, activation='softmax')(x)
+predictions = Dense(46, activation='softmax')(x)
 
 # this is the model we will train
 model = Model(input=base_model.input, output=predictions)
@@ -75,9 +75,8 @@ for layer in base_model.layers:
     layer.trainable = False
 
 # compile the model (should be done *after* setting layers to non-trainable)
+
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'], )
-
-
 #Save the model after every epoch.
 mc_top = ModelCheckpoint(top_layers_checkpoint_path, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
 
@@ -132,12 +131,6 @@ model.fit_generator(generator=train_generator,
                     callbacks=[mc_fit, tb]
 )
 
-model.fit_generator(
-    train_generator,
-    samples_per_epoch=nb_train_samples // batch_size,
-    nb_epoch=fit_epochs,
-    validation_data=validation_generator,
-    nb_val_samples=nb_validation_samples // batch_size,
-    callbacks=[mc_fit, tb])
+model.evaluate_generator(generator=valid_generator)
 
 model.save_weights(new_extended_inception_weights)
