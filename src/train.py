@@ -21,18 +21,16 @@ experiment_name = "image-similarity"
 # import data
 traindf = pd.read_csv("../data/category_data.csv")
 traindf['id'] = "../data/" + traindf['id']
-
 target_labels = traindf['label']
 
 
 labels_ohe_names = pd.get_dummies(target_labels, sparse=True)
 labels_ohe = np.asarray(labels_ohe_names)
-print(labels_ohe.shape)
-
+print("Preparing train data ..... ")
 train_data = np.array([img_to_array(load_img(img,target_size=(299, 299))
                        ) for img in traindf['id'].values.tolist()]).astype('float32')
 
-print("Train data shape is: " + train_data.shape)
+print("Train data shape is: ", train_data.shape)
 
 x_train, x_val, y_train, y_val = train_test_split(train_data,
                                                     target_labels,
@@ -72,6 +70,7 @@ train_generator = train_datagen.flow(x_train, y_train_ohe, shuffle=False, batch_
 val_datagen = ImageDataGenerator(rescale = 1./255)
 val_generator = train_datagen.flow(x_val, y_val_ohe, shuffle=False, batch_size=BATCH_SIZE, seed=1)
 
+print("Downloading Base Model.....")
 base_model = InceptionV3(weights='imagenet', include_top=False)
 
 
