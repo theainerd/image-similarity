@@ -8,9 +8,6 @@ experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
 
 import pandas as pd
 import numpy as np
-
-import gd_datagen
-
 from keras.models import Model,Sequential
 from keras.callbacks import ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
