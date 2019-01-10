@@ -30,7 +30,7 @@ model = load_model("../snapshots/top_layers/top_layers.h5")
 experiment_name = "image-similarity"
 traindf = pd.read_csv("../data/category_data.csv")
 top_layers_checkpoint_path = "../snapshots/top_layers/top_layers.h5"
-fine_tuned_checkpoint_path = "../snapshots/fine_tuned/"
+fine_tuned_checkpoint_path = "../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
 new_extended_inception_weights = "../snapshots/final/final.h5"
 
 datagen=ImageDataGenerator(rescale=1./255.,validation_split=0.25)
@@ -82,7 +82,7 @@ model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossent
 # alongside the top Dense layers
 #model.fit_generator(...)
 
-filepath= fine_tuned_checkpoint_path + " fine_tuned " +  "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
+filepath= fine_tuned_checkpoint_path + "fine_tuned_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
 #Save the model after every epoch.
 mc_fit = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
 checkpoints =[mc_fit]
