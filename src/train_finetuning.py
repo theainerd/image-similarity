@@ -84,7 +84,7 @@ model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossent
 # alongside the top Dense layers
 #model.fit_generator(...)
 
-filepath= fine_tuned_checkpoint_path + " fine_tuned " +  "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5
+filepath= fine_tuned_checkpoint_path + " fine_tuned " +  "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
 #Save the model after every epoch.
 mc_fit = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
 checkpoints =[mc_fit]
