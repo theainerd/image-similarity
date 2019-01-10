@@ -61,7 +61,7 @@ traindf = pd.read_csv("../data/category_data.csv")
 traindf['id'] = "../data/" + traindf['id']
 target_labels = traindf['label']
 
-traindf = traindf
+df_overall = traindf
 
 final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
 
@@ -109,7 +109,7 @@ x = GlobalAveragePooling2D()(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
 # and a logistic layer -- we have 2 classes
-predictions = L1_output_predictions = Dense(get_num_classes_column_lb('id', df_overall, headings_dict), activation='softmax', name  = 'label')(x)
+predictions = L1_output_predictions = Dense(get_num_classes_column_lb('id', df_overall, headings_dict), activation='softmax')(x)
 
 # this is the model we will train
 model = Model(inputs=base_model.input, outputs=predictions)
