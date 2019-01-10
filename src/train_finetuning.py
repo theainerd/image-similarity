@@ -20,13 +20,14 @@ from keras import regularizers, optimizers
 import pandas as pd
 import numpy as np
 
+from keras.models import load_model
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
+
+model = load_model("../snapshots/top_layers/top_layers.h5")
 experiment_name = "image-similarity"
 traindf = pd.read_csv("../data/category_data.csv")
-final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
-
 top_layers_checkpoint_path = "../snapshots/top_layers/top_layers.h5"
 fine_tuned_checkpoint_path = "../snapshots/fine_tuned/fine_tuned.h5"
 new_extended_inception_weights = "../snapshots/final/final.h5"
@@ -57,7 +58,6 @@ shuffle=True,
 class_mode="sparse",
 target_size=(224,224))
 
-model = Model(input=base_model.input, output=predictions)
 
 if os.path.exists(fine_tuned_checkpoint_path):
 	model.load_weights(fine_tuned_checkpoint_path)
@@ -96,4 +96,4 @@ model.fit_generator(
     validation_steps=nbatches_valid,
     workers=[mc_fit])
 
-model.save()
+model.save(new_extended_inception_weights)
