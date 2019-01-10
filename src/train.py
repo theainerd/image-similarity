@@ -32,70 +32,43 @@ from PIL import Image
 
 
 
-def get_num_classes_column_lb(column_name, df, headings_dict):
-
-    # use for getting number of predictions for multi class classification
-
-    lb = LabelBinarizer()
-    column = df.iloc[:, headings_dict[column_name]:headings_dict[column_name]+1]
-    column_np = np.array(column)
-    lb.fit(column_np.astype(str))
-    return (len(lb.classes_))
-
-file_name = '../data/category_data.csv'
-#getting the header
-file = open(file_name, 'r')
-lines = file.readlines()
-file.close()
-headings = lines[0].strip().split(',')
-headings_dict = dict()
-for i in range(len(headings)):
-    headings_dict[headings[i]] = i
-
-print(headings_dict)
-
-
 experiment_name = "image-similarity"
-# import data
 traindf = pd.read_csv("../data/category_data.csv")
-traindf['id'] = "../data/" + traindf['id']
-
-df_overall = traindf
-
 final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
 
 top_layers_checkpoint_path = "../snapshots/top_layers/top_layers.h5"
 fine_tuned_checkpoint_path = "../snapshots/fine_tuned/fine_tuned.h5"
 new_extended_inception_weights = "../snapshots/final/final.h5"
 
-len_df=len(traindf.id)
-tr_len=int(len_df*0.8)
+datagen=ImageDataGenerator(rescale=1./255.,validation_split=0.25)
 
-df_train = traindf[0:tr_len]
-df_validation=traindf[tr_len:len_df]
-df_overall = traindf
+train_generator=datagen.flow_from_dataframe(
+dataframe=traindf,
+directory="../data/",
+x_col="id",
+y_col="label",
+subset="training",
+batch_size=1,
+seed=42,
+shuffle=True,
+class_mode="sparse",
+target_size=(32,32))
 
-print('length of training dataframe (80% data)=>'+str(len(df_train.id)))
-print('length of validation dataframe (80% data)=>'+str(len(df_validation.id)))
+valid_generator=datagen.flow_from_dataframe(
+dataframe=traindf,
+directory="../data/",
+x_col="id",
+y_col="label",
+subset="validation",
+batch_size=1,
+seed=42,
+shuffle=True,
+class_mode="sparse",
+target_size=(32,32))
 
-from gd_datagen import generator_from_df
-ntrain = df_train.shape[0]
-print('ntrain')
-nvalid = df_validation.shape[0]
-batch_size = 4
-epochs_first = 15 # For bottleneck training
-epochs_second = 30 # For Fine tuning
-target_size = (244, 244)
-
-nbatches_train, mod = divmod(ntrain, batch_size)
-nbatches_valid, mod = divmod(nvalid, batch_size)
-
-nworkers = 10
 
 print("Downloading Base Model.....")
-
 base_model = InceptionV3(weights='imagenet', include_top=False)
-
 
 # add a global spatial average pooling layer
 x = base_model.output
@@ -103,7 +76,7 @@ x = GlobalAveragePooling2D()(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
 # and a logistic layer -- we have 2 classes
-predictions = Dense(get_num_classes_column_lb('label', df_overall, headings_dict), activation='softmax',name='L1_output')(x)
+predictions = Dense(1, activation='softmax',name='L1_output')(x)
 
 # this is the model we will train
 model = Model(inputs=base_model.input, outputs=predictions)
@@ -119,27 +92,24 @@ for layer in base_model.layers:
 
 # compile the model (should be done *after* setting layers to non-trainable)
 
-model.compile(optimizer='rmsprop', loss={'L1_output': 'categorical_crossentropy'}, metrics=['accuracy'])
-
-parametrization_dict = {'multi_class':[{'L1_output':'label'}],'multi_label':[]}
-
-train_generator = generator_from_df(df_train, df_overall, headings_dict, batch_size, target_size, features=None, parametrization_dict = parametrization_dict)
-validation_generator = generator_from_df(df_validation, df_overall, headings_dict, batch_size, target_size, features=None, parametrization_dict= parametrization_dict)
-##############################y code
-
+model.compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 filepath= top_layers_checkpoint_path + experiment_name + "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
+
 ##############################y code
 #Save the model after every epoch.
+
 mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
 callbacks_list = [mc_top]
 
-model.fit_generator(
-    generator=train_generator,
-    steps_per_epoch=nbatches_train,
-    epochs=epochs_first,
-    verbose=1,
-    callbacks=callbacks_list,
-    validation_data=validation_generator,
-    validation_steps=nbatches_valid)
+STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
+STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
+model.fit_generator(generator=train_generator,
+                    steps_per_epoch=STEP_SIZE_TRAIN,
+                    validation_data=valid_generator,
+                    validation_steps=STEP_SIZE_VALID,
+                    epochs=20,
+                    callbacks = callbacks_list
+)
 
+model.evaluate_generator(generator=valid_generator)
 model.save(top_layers_checkpoint_path)
