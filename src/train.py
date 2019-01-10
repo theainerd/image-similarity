@@ -141,7 +141,6 @@ model.fit_generator(
     verbose=1,
     callbacks=callbacks_list,
     validation_data=validation_generator,
-    validation_steps=nbatches_valid,
-    workers=nworkers)
+    validation_steps=nbatches_valid)
 
-model.save(bottleneck.h5)
+model.save(top_layers_checkpoint_path)
