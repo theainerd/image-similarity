@@ -45,11 +45,11 @@ directory="../data/",
 x_col="id",
 y_col="label",
 subset="training",
-batch_size=1,
+batch_size=4,
 seed=42,
 shuffle=True,
 class_mode="sparse",
-target_size=(32,32))
+target_size=(224,224))
 
 valid_generator=datagen.flow_from_dataframe(
 dataframe=traindf,
@@ -61,7 +61,7 @@ batch_size=1,
 seed=42,
 shuffle=True,
 class_mode="sparse",
-target_size=(32,32))
+target_size=(224,224))
 
 
 print("Downloading Base Model.....")
