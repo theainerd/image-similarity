@@ -132,7 +132,7 @@ filepath= top_layers_checkpoint_path + experiment_name + "_inceptionv3_bottlenec
 ##############################y code
 #Save the model after every epoch.
 mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
-callbacks_list = [checkpoint]
+callbacks_list = [mc_top]
 
 model.fit_generator(
     generator=train_generator,
