@@ -96,7 +96,6 @@ filepath= top_layers_checkpoint_path + experiment_name + "_inceptionv3_bottlenec
 #Save the model after every epoch.
 
 mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
-callbacks_list = [mc_top]
 
 STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
 STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
@@ -105,7 +104,7 @@ model.fit_generator(generator=train_generator,
                     validation_data=valid_generator,
                     validation_steps=STEP_SIZE_VALID,
                     epochs=20,
-                    callbacks = callbacks_list
+                    callbacks = mc_top
 )
 
 model.evaluate_generator(generator=valid_generator)
