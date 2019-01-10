@@ -99,6 +99,7 @@ train_generator = generator_from_df(df_train, df_overall, headings_dict, batch_s
 validation_generator = generator_from_df(df_validation, df_overall, headings_dict, batch_size, target_size, features=None, parametrization_dict= parametrization_dict)
 
 print("Downloading Base Model.....")
+
 base_model = InceptionV3(weights='imagenet', include_top=False)
 
 
@@ -112,7 +113,7 @@ predictions = Dense(46, activation='softmax')(x)
 
 
 # this is the model we will train
-model = Model(input=base_model.input, output=predictions)
+model = Model(inputs=base_model.input, outputs=predictions)
 
 if os.path.exists(top_layers_checkpoint_path):
 	model.load_weights(top_layers_checkpoint_path)
