@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+
+import gd_datagen
+
 from keras.models import Model,Sequential
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization
@@ -10,6 +13,15 @@ from keras import regularizers, optimizers
 import pandas as pd
 import numpy as np
 
+from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.preprocessing import LabelBinarizer
+
+import pickle
+import glob
+import os
+from PIL import Image
+
+
 # # import comet_ml in the top of your file
 # from comet_ml import Experiment
 #
@@ -17,31 +29,39 @@ import numpy as np
 # experiment = Experiment(api_key="",
 #                         project_name="fashion-object-detection")
 #
+def get_num_classes_column_lb(column_name, df, headings_dict):
+
+    # use for getting number of predictions for multi class classification
+
+    lb = LabelBinarizer()
+    column = df.iloc[:, headings_dict[column_name]:headings_dict[column_name]+1]
+    column_np = np.array(column)
+    lb.fit(column_np.astype(str))
+    return (len(lb.classes_))
+
+file_name = '../data/category_data.csv'
+#getting the header
+file = open(file_name, 'r')
+lines = file.readlines()
+file.close()
+headings = lines[0].strip().split(',')
+headings_dict = dict()
+for i in range(len(headings)):
+    headings_dict[headings[i]] = i
+
+print(headings_dict)
+
+
 experiment_name = "image-similarity"
 # import data
 traindf = pd.read_csv("../data/category_data.csv")
 traindf['id'] = "../data/" + traindf['id']
 target_labels = traindf['label']
 
+traindf = traindf[:10]
+print(traindf)
 
-labels_ohe_names = pd.get_dummies(target_labels, sparse=True)
-labels_ohe = np.asarray(labels_ohe_names)
-print("Preparing train data ..... ")
-train_data = np.array([img_to_array(load_img(img,target_size=(299, 299))
-                       ) for img in traindf['id'].values.tolist()]).astype('float32')
-
-print("Train data shape is: ", train_data.shape)
-
-x_train, x_val, y_train, y_val = train_test_split(train_data,
-                                                    target_labels,
-                                                    test_size=0.15,
-                                                    stratify=np.array(y_train),
-                                                    random_state=42)
-
-y_train_ohe = pd.get_dummies(y_train.reset_index(drop=True)).as_matrix()
-y_val_ohe = pd.get_dummies(y_val.reset_index(drop=True)).as_matrix()
-
-BATCH_SIZE = 32
+BATCH_SIZE = 1
 
 
 final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
@@ -50,25 +70,33 @@ top_layers_checkpoint_path = "../snapshots/top_layers"
 fine_tuned_checkpoint_path = "../snapshots/fine_tuned"
 new_extended_inception_weights = "../snapshots/final"
 
-datagen=ImageDataGenerator(rescale=1./255.,
-        shear_range=0.2,
-        zoom_range=0.5,
-        width_shift_range=0.5,
-        horizontal_flip =True)
+len_df=len(traindf.id)
+tr_len=int(len_df*0.8)
 
+df_train = traindf[0:tr_len]
+df_validation=traindf[tr_len:len_df]
+df_overall = traindf
 
-# Create train generator.
-train_datagen = ImageDataGenerator(rescale=1./255,
-                                   rotation_range=30,
-                                   width_shift_range=0.2,
-                                   height_shift_range=0.2,
-                                   horizontal_flip = 'true')
+print('length of training dataframe (80% data)=>'+str(len(df_train.id)))
+print('length of validation dataframe (80% data)=>'+str(len(df_validation.id)))
 
-train_generator = train_datagen.flow(x_train, y_train_ohe, shuffle=False, batch_size=BATCH_SIZE, seed=1)
+from gd_datagen import generator_from_df
+ntrain = df_train.shape[0]
+print('ntrain')
+nvalid = df_validation.shape[0]
+batch_size = 4
+epochs = 25
+target_size = (224, 224)
 
-# Create validation generator
-val_datagen = ImageDataGenerator(rescale = 1./255)
-val_generator = train_datagen.flow(x_val, y_val_ohe, shuffle=False, batch_size=BATCH_SIZE, seed=1)
+nbatches_train, mod = divmod(ntrain, batch_size)
+nbatches_valid, mod = divmod(nvalid, batch_size)
+
+nworkers = 10
+
+parametrization_dict = {'multi_class':[{'L1_output':'id'}],'multi_label':[]}
+
+train_generator = generator_from_df(df_train, df_overall, headings_dict, batch_size, target_size, features=None, parametrization_dict = parametrization_dict)
+validation_generator = generator_from_df(df_validation, df_overall, headings_dict, batch_size, target_size, features=None, parametrization_dict= parametrization_dict)
 
 print("Downloading Base Model.....")
 base_model = InceptionV3(weights='imagenet', include_top=False)
@@ -104,19 +132,17 @@ filepath= top_layers_checkpoint_path + experiment_name + "_inceptionv3_bottlenec
 ##############################y code
 #Save the model after every epoch.
 mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
+callbacks_list = [checkpoint]
 
-#Save the TensorBoard logs.
-tb = TensorBoard(log_dir='./logs', histogram_freq=1, write_graph=True, write_images=True)
-
-
-STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
-STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
-model.fit_generator(generator=train_generator,
-                    steps_per_epoch=STEP_SIZE_TRAIN,
-                    validation_data=valid_generator,
-                    validation_steps=STEP_SIZE_VALID,
-                    epochs=20
-)
+model.fit_generator(
+    generator=train_generator,
+    steps_per_epoch=nbatches_train,
+    epochs=epochs,
+    verbose=1,
+    callbacks=callbacks_list,
+    validation_data=validation_generator,
+    validation_steps=nbatches_valid,
+    workers=nworkers)
 
 model.evaluate_generator(generator=valid_generator)
 
@@ -150,13 +176,15 @@ model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossent
 # alongside the top Dense layers
 #model.fit_generator(...)
 
-model.fit_generator(generator=train_generator,
-                    steps_per_epoch=STEP_SIZE_TRAIN,
-                    validation_data=valid_generator,
-                    validation_steps=STEP_SIZE_VALID,
-                    epochs=20,
-                    callbacks=[mc_fit, tb]
-)
+model.fit_generator(
+    generator=train_generator,
+    steps_per_epoch=nbatches_train,
+    epochs=epochs,
+    verbose=1,
+    callbacks=callbacks_list,
+    validation_data=validation_generator,
+    validation_steps=nbatches_valid,
+    workers=[mc_fit])
 
 model.evaluate_generator(generator=valid_generator)
 
