@@ -60,8 +60,6 @@ class_mode="sparse",
 target_size=(224,224))
 
 
-model = load_model("../snapshots/top_layers_checkpoint_path/")
-
 if os.path.exists(fine_tuned_checkpoint_path):
 	model.load_weights(fine_tuned_checkpoint_path)
 	print ("Checkpoint" + fine_tuned_checkpoint_path + " loaded.")
