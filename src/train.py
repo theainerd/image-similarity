@@ -12,6 +12,7 @@ import numpy as np
 import gd_datagen
 
 from keras.models import Model,Sequential
+from keras.callbacks import ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization,GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
