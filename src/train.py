@@ -90,7 +90,7 @@ for layer in base_model.layers:
 # compile the model (should be done *after* setting layers to non-trainable)
 
 model.compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-filepath= top_layers_checkpoint_path + experiment_name + "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
+filepath= top_layers_checkpoint_path + "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
 
 ##############################y code
 #Save the model after every epoch.
@@ -104,8 +104,7 @@ model.fit_generator(generator=train_generator,
                     validation_data=valid_generator,
                     validation_steps=STEP_SIZE_VALID,
                     epochs=20,
-                    callbacks = mc_top
-)
+                    callbacks = mc_top)
 
 model.evaluate_generator(generator=valid_generator)
 model.save(top_layers_checkpoint_path)
