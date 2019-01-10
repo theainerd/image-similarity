@@ -8,6 +8,7 @@ experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
 
 import pandas as pd
 import numpy as np
+import os
 
 from keras.models import Model,Sequential
 from keras.callbacks import ModelCheckpoint
@@ -52,7 +53,7 @@ directory="../data/",
 x_col="id",
 y_col="label",
 subset="validation",
-batch_size=1,
+batch_size=32,
 seed=42,
 shuffle=True,
 class_mode="sparse",
