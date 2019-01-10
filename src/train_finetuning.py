@@ -30,7 +30,7 @@ model = load_model("../snapshots/top_layers/top_layers.h5")
 experiment_name = "image-similarity"
 traindf = pd.read_csv("../data/category_data.csv")
 top_layers_checkpoint_path = "../snapshots/top_layers/top_layers.h5"
-fine_tuned_checkpoint_path = "../snapshots/fine_tuned/fine_tuned.h5"
+fine_tuned_checkpoint_path = "../snapshots/fine_tuned/"
 new_extended_inception_weights = "../snapshots/final/final.h5"
 
 datagen=ImageDataGenerator(rescale=1./255.,validation_split=0.25)
@@ -60,9 +60,11 @@ class_mode="sparse",
 target_size=(224,224))
 
 
+model = load_model("../snapshots/top_layers_checkpoint_path/")
+
 if os.path.exists(fine_tuned_checkpoint_path):
 	model.load_weights(fine_tuned_checkpoint_path)
-	print ("Checkpoint '" + top_layers_checkpoint_path + "' loaded.")
+	print ("Checkpoint" + fine_tuned_checkpoint_path + " loaded.")
 
 
 # we chose to train the top 2 inception blocks, i.e. we will freeze
@@ -82,19 +84,23 @@ model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossent
 # alongside the top Dense layers
 #model.fit_generator(...)
 
-filepath = fine_tuned_checkpoint_path
+filepath= fine_tuned_checkpoint_path + " fine_tuned " +  "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5
 #Save the model after every epoch.
 mc_fit = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
+checkpoints =[mc_fit]
 
 
-model.fit_generator(
-    generator=train_generator,
-    steps_per_epoch=nbatches_train,
-    epochs=epochs_second,
-    verbose=1,
-    callbacks=callbacks_list,
-    validation_data=validation_generator,
-    validation_steps=nbatches_valid,
-    workers=[mc_fit])
+STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
+STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
 
+model.fit_generator(generator=train_generator,
+                    steps_per_epoch=STEP_SIZE_TRAIN,
+                    validation_data=valid_generator,
+                    validation_steps=STEP_SIZE_VALID,
+                    epochs=20,
+                    callbacks = checkpoints)
+
+
+
+model.evaluate_generator(generator=valid_generator)
 model.save(new_extended_inception_weights)
