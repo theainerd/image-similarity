@@ -92,11 +92,6 @@ nbatches_valid, mod = divmod(nvalid, batch_size)
 
 nworkers = 10
 
-parametrization_dict = {'multi_class':[{'L1_output':'label'}],'multi_label':[]}
-
-train_generator = generator_from_df(df_train, df_overall, headings_dict, batch_size, target_size, features=None, parametrization_dict = parametrization_dict)
-validation_generator = generator_from_df(df_validation, df_overall, headings_dict, batch_size, target_size, features=None, parametrization_dict= parametrization_dict)
-
 print("Downloading Base Model.....")
 
 base_model = InceptionV3(weights='imagenet', include_top=False)
@@ -108,15 +103,15 @@ x = GlobalAveragePooling2D()(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
 # and a logistic layer -- we have 2 classes
-predictions = Dense(get_num_classes_column_lb('label', df_overall, headings_dict), activation='softmax')(x)
+predictions = Dense(get_num_classes_column_lb('label', df_overall, headings_dict), activation='softmax',name='L1_output')(x)
 
 # this is the model we will train
 model = Model(inputs=base_model.input, outputs=predictions)
 
-if os.path.exists(top_layers_checkpoint_path):
-	model.load_weights(top_layers_checkpoint_path)
-	print ("Checkpoint '" + top_layers_checkpoint_path + "' loaded.")
 
+# if os.path.exists(top_layers_checkpoint_path):
+# 	model.load_weights(top_layers_checkpoint_path)
+# 	print ("Checkpoint '" + top_layers_checkpoint_path + "' loaded.")
 # first: train only the top layers (which were randomly initialized)
 # i.e. freeze all convolutional InceptionV3 layers
 for layer in base_model.layers:
@@ -124,7 +119,12 @@ for layer in base_model.layers:
 
 # compile the model (should be done *after* setting layers to non-trainable)
 
-model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer='rmsprop', loss={'L1_output': 'categorical_crossentropy'}, metrics=['accuracy'])
+
+parametrization_dict = {'multi_class':[{'L1_output':'label'}],'multi_label':[]}
+
+train_generator = generator_from_df(df_train, df_overall, headings_dict, batch_size, target_size, features=None, parametrization_dict = parametrization_dict)
+validation_generator = generator_from_df(df_validation, df_overall, headings_dict, batch_size, target_size, features=None, parametrization_dict= parametrization_dict)
 ##############################y code
 
 filepath= top_layers_checkpoint_path + experiment_name + "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
