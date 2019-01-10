@@ -22,13 +22,6 @@ import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
-import pickle
-import glob
-import os
-from PIL import Image
-
-
-
 experiment_name = "image-similarity"
 traindf = pd.read_csv("../data/category_data.csv")
 final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
@@ -57,7 +50,7 @@ directory="../data/",
 x_col="id",
 y_col="label",
 subset="validation",
-batch_size=1,
+batch_size=32,
 seed=42,
 shuffle=True,
 class_mode="sparse",
@@ -77,6 +70,10 @@ predictions = Dense(46, activation='softmax')(x)
 
 # this is the model we will train
 model = Model(inputs=base_model.input, outputs=predictions)
+
+if os.path.exists(top_layers_checkpoint_path):
+	model.load_weights(top_layers_checkpoint_path)
+	print ("Checkpoint '" + top_layers_checkpoint_path + "' loaded.")
 
 
 # if os.path.exists(top_layers_checkpoint_path):
@@ -100,12 +97,14 @@ mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=
 checkpoints =[mc_top]
 STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
 STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
+
 model.fit_generator(generator=train_generator,
                     steps_per_epoch=STEP_SIZE_TRAIN,
                     validation_data=valid_generator,
                     validation_steps=STEP_SIZE_VALID,
                     epochs=20,
                     callbacks = checkpoints)
+
 
 model.evaluate_generator(generator=valid_generator)
 model.save(top_layers_checkpoint_path)
