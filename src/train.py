@@ -64,9 +64,9 @@ traindf = traindf
 
 final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
 
-top_layers_checkpoint_path = "../snapshots/top_layers"
-fine_tuned_checkpoint_path = "../snapshots/fine_tuned"
-new_extended_inception_weights = "../snapshots/final"
+top_layers_checkpoint_path = "../snapshots/top_layers/top_layers.h5"
+fine_tuned_checkpoint_path = "../snapshots/fine_tuned/fine_tuned.h5"
+new_extended_inception_weights = "../snapshots/final/final.h5"
 
 len_df=len(traindf.id)
 tr_len=int(len_df*0.8)
