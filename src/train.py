@@ -1,3 +1,11 @@
+# import comet_ml in the top of your file
+from comet_ml import Experiment
+
+# Add the following code anywhere in your machine learning file
+experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
+                        project_name="image-similarity", workspace="theainerd")
+
+
 import pandas as pd
 import numpy as np
 
@@ -22,13 +30,7 @@ import os
 from PIL import Image
 
 
-# # import comet_ml in the top of your file
-# from comet_ml import Experiment
-#
-# Add the following code anywhere in your machine learning file
-# experiment = Experiment(api_key="",
-#                         project_name="fashion-object-detection")
-#
+
 def get_num_classes_column_lb(column_name, df, headings_dict):
 
     # use for getting number of predictions for multi class classification
@@ -58,11 +60,7 @@ traindf = pd.read_csv("../data/category_data.csv")
 traindf['id'] = "../data/" + traindf['id']
 target_labels = traindf['label']
 
-traindf = traindf[:10]
-print(traindf)
-
-BATCH_SIZE = 1
-
+traindf = traindf
 
 final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
 
