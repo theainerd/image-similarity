@@ -13,7 +13,7 @@ import gd_datagen
 
 from keras.models import Model,Sequential
 from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization
+from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization,GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
 from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
 from keras.layers import Conv2D, MaxPooling2D
@@ -83,7 +83,8 @@ ntrain = df_train.shape[0]
 print('ntrain')
 nvalid = df_validation.shape[0]
 batch_size = 4
-epochs = 25
+epochs_first = 5 # For bottleneck training
+epochs_second = 30 # For Fine tuning
 target_size = (224, 224)
 
 nbatches_train, mod = divmod(ntrain, batch_size)
@@ -135,7 +136,7 @@ callbacks_list = [checkpoint]
 model.fit_generator(
     generator=train_generator,
     steps_per_epoch=nbatches_train,
-    epochs=epochs,
+    epochs=epochs_first,
     verbose=1,
     callbacks=callbacks_list,
     validation_data=validation_generator,
@@ -177,7 +178,7 @@ model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossent
 model.fit_generator(
     generator=train_generator,
     steps_per_epoch=nbatches_train,
-    epochs=epochs,
+    epochs=epochs_second,
     verbose=1,
     callbacks=callbacks_list,
     validation_data=validation_generator,
