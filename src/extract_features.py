@@ -52,7 +52,6 @@ from sklearn.preprocessing import LabelBinarizer
 #         data['gender'] = gender
 #     return data
 
-test_datagen=ImageDataGenerator(rescale=1./255.,validation_split=0.25)
 
 
 testdf = pd.read_csv("../data/category_data.csv")
@@ -64,6 +63,8 @@ intermediate_layer_model = Model(inputs=model.input,
                                      outputs=[
                                      model.get_layer('dense_1').output
                                      ])
+
+test_datagen=ImageDataGenerator(rescale=1./255.)
 
 test_generator=test_datagen.flow_from_dataframe(
 dataframe=testdf,
