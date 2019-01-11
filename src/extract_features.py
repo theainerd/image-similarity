@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+
+from PIL import Image
 from keras.models import Model,Sequential
 from keras.callbacks import ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
@@ -16,30 +18,35 @@ from keras.models import load_model
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
-image = Image.open(io.BytesIO(img_response.content))
-if image.mode != "RGB":
-    image = image.convert("RGB")
-image = image.resize((original_width, original_height))
-image = image.resize((final_width, final_height))
-image = img_to_array(image)
-image = imagenet_utils.preprocess_input(image)
-image = np.divide(image,255.0) #rescaling
-image = np.expand_dims(image, axis=0)
-
-testdf = pd.read_csv("../data/category_data.csv")
-
-model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_01_0.46.h5")
+model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_02_0.57.h5")
 
 intermediate_layer_model = Model(inputs=model.input,
                                      outputs=[
                                      model.get_layer('dense_1').output
                                      ])
 
-preds = intermediate_layer_model.predict(image)
-print(preds)
-vector = []
-# for i, l in enumerate(preds):
-    # print(type(l))
+def extract_vector(image_path):
+    final_width = 229
+    final_height = 229
+    image = Image.open(image_path)
+    if image.mode != "RGB":
+        image = image.convert("RGB")
 
-print(str(preds))
-# print("vector: "+str(len(preds[0][0])))
+    image = image.resize((final_width, final_height))
+    image = img_to_array(image)
+    image = np.divide(image,255.0) #rescaling
+    image = np.expand_dims(image, axis=0)
+    preds = intermediate_layer_model.predict(image)
+    preds = preds[0]
+    preds = preds.tolist()
+    return preds
+
+
+
+traindf = pd.read_csv("../data/category_data.csv")
+traindf['id'] = "../data/"+traindf['id']
+traindf['vectors'] = traindf['label']
+traindf['vectors'] = traindf['id'].map(lambda x: extract_vector(x))
+traindf = traindf['vectors']
+
+traindf.to_pickle("../data/feature_vector.pkl")
