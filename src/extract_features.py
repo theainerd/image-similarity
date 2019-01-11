@@ -55,7 +55,6 @@ from sklearn.preprocessing import LabelBinarizer
 
 
 testdf = pd.read_csv("../data/category_data.csv")
-testdf = testdf[:4]
 
 model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_01_0.46.h5")
 
