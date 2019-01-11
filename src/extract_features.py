@@ -68,7 +68,7 @@ test_datagen=ImageDataGenerator(rescale=1./255.)
 
 test_generator=test_datagen.flow_from_dataframe(
 dataframe=testdf,
-directory="./data/",
+directory="../data/",
 x_col="id",
 y_col=None,
 batch_size=1,
