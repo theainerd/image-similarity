@@ -18,7 +18,7 @@ from keras.models import load_model
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
-model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_01_0.56.h5")
+model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_02_0.52.h5")
 
 intermediate_layer_model = Model(inputs=model.input,
                                      outputs=[
