@@ -16,6 +16,42 @@ from keras.models import load_model
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
+# def get_gender_data(image_path, model):
+#
+#     original_width = 300
+#     original_height = 300
+#     final_width = 224
+#     final_height = 224
+#     int2class = {0:'female', 1:'male'}
+#     threshold = 0.5
+#     data = {"success": False}
+#     response = ""
+#     gender = ""
+#     if image_path:
+#         # read the image in PIL format
+#         image = Image.open(io.BytesIO(img_response.content))
+#         if image.mode != "RGB":
+#             image = image.convert("RGB")
+#         image = image.resize((original_width, original_height))
+#         image = image.resize((final_width, final_height))
+#         image = img_to_array(image)
+#         image = np.expand_dims(image, axis=0)
+#         image = imagenet_utils.preprocess_input(image)
+#         image = np.divide(image,255.0) #rescaling
+#         ans = model.predict(image, batch_size=10)
+#         ans = ans[0][0] #on a scale of zero to one
+#         response = ans
+#
+#         if (ans >= threshold):
+#             data = {"success": True}
+#             gender = int2class[1]
+#         else:
+#             data = {"success": True}
+#             gender = int2class[0]
+#         data['response'] = (float)(response)
+#         data['gender'] = gender
+#     return data
+
 testdf = pd.read_csv("../data/category_data.csv")
 testdf = testdf[:4]
 
@@ -37,11 +73,13 @@ shuffle=False,
 class_mode=None,
 target_size=(32,32))
 
+
 test_generator.reset()
-preds = model.predict_generator(test_generator,verbose=1)
+preds = intermediate_layer_model.predict_generator(test_generator,verbose=1)
+print(preds)
 vector = []
-for i, l in enumerate(preds):
-    print(type(l))
+# for i, l in enumerate(preds):
+    # print(type(l))
 
 print(str(preds))
-print("vector: "+str(len(preds[0][0])))
+# print("vector: "+str(len(preds[0][0])))
