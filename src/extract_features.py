@@ -52,6 +52,9 @@ from sklearn.preprocessing import LabelBinarizer
 #         data['gender'] = gender
 #     return data
 
+test_datagen=ImageDataGenerator(rescale=1./255.,validation_split=0.25)
+
+
 testdf = pd.read_csv("../data/category_data.csv")
 testdf = testdf[:4]
 
