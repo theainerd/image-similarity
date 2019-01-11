@@ -74,9 +74,9 @@ class_mode="categorical",
 target_size=(224,224))
 
 
-# if os.path.exists(fine_tuned_checkpoint_path):
-# 	model.load_weights(fine_tuned_checkpoint_path)
-# 	print ("Checkpoint" + fine_tuned_checkpoint_path + " loaded.")
+if os.path.exists(fine_tuned_checkpoint_path):
+	model.load_weights("fine_tuned_inceptionv3_bottleneck_03_0.55.h5")
+	print ("Checkpoint" + fine_tuned_checkpoint_path + " loaded.")
 #
 
 # we chose to train the top 2 inception blocks, i.e. we will freeze

@@ -16,43 +16,15 @@ from keras.models import load_model
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
-# def get_gender_data(image_path, model):
-#
-#     original_width = 300
-#     original_height = 300
-#     final_width = 224
-#     final_height = 224
-#     int2class = {0:'female', 1:'male'}
-#     threshold = 0.5
-#     data = {"success": False}
-#     response = ""
-#     gender = ""
-#     if image_path:
-#         # read the image in PIL format
-#         image = Image.open(io.BytesIO(img_response.content))
-#         if image.mode != "RGB":
-#             image = image.convert("RGB")
-#         image = image.resize((original_width, original_height))
-#         image = image.resize((final_width, final_height))
-#         image = img_to_array(image)
-#         image = np.expand_dims(image, axis=0)
-#         image = imagenet_utils.preprocess_input(image)
-#         image = np.divide(image,255.0) #rescaling
-#         ans = model.predict(image, batch_size=10)
-#         ans = ans[0][0] #on a scale of zero to one
-#         response = ans
-#
-#         if (ans >= threshold):
-#             data = {"success": True}
-#             gender = int2class[1]
-#         else:
-#             data = {"success": True}
-#             gender = int2class[0]
-#         data['response'] = (float)(response)
-#         data['gender'] = gender
-#     return data
-
-
+image = Image.open(io.BytesIO(img_response.content))
+if image.mode != "RGB":
+    image = image.convert("RGB")
+image = image.resize((original_width, original_height))
+image = image.resize((final_width, final_height))
+image = img_to_array(image)
+image = imagenet_utils.preprocess_input(image)
+image = np.divide(image,255.0) #rescaling
+image = np.expand_dims(image, axis=0)
 
 testdf = pd.read_csv("../data/category_data.csv")
 
@@ -63,22 +35,7 @@ intermediate_layer_model = Model(inputs=model.input,
                                      model.get_layer('dense_1').output
                                      ])
 
-test_datagen=ImageDataGenerator(rescale=1./255.)
-
-test_generator=test_datagen.flow_from_dataframe(
-dataframe=testdf,
-directory="../data/",
-x_col="id",
-y_col=None,
-batch_size=10,
-seed=42,
-shuffle=False,
-class_mode=None,
-target_size=(32,32))
-
-
-test_generator.reset()
-preds = intermediate_layer_model.predict_generator(test_generator,verbose=1)
+preds = intermediate_layer_model.predict(image)
 print(preds)
 vector = []
 # for i, l in enumerate(preds):
