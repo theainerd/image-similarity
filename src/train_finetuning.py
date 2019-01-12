@@ -97,11 +97,13 @@ for layer in model.layers[172:]:
 # we need to recompile the model for these modifications to take effect
 # we use SGD with a low learning rate
 from keras.optimizers import Adam
+clr_triangular = CyclicLR(mode='triangular')
 model.compile(optimizer=Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 # we train our model again (this time fine-tuning the top 2 inception blocks
 # alongside the top Dense layers
 #model.fit_generator(...)
+
 
 filepath= fine_tuned_checkpoint_path + "fine_tuned_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
 #Save the model after every epoch.

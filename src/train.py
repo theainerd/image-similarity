@@ -43,13 +43,12 @@ class_weights = class_weight.compute_class_weight('balanced',
                                                  traindf['label'])
 
 
-final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
-
-top_layers_checkpoint_path = "../snapshots/top_layers/top_layers.h5"
+top_layers_checkpoint_path = "../snapshots/top_layers/"
 fine_tuned_checkpoint_path = "../snapshots/fine_tuned/fine_tuned.h5"
 new_extended_inception_weights = "../snapshots/final/final.h5"
 
-datagen=ImageDataGenerator(rescale=1./255.,rotation_range=40,
+datagen=ImageDataGenerator(rescale=1./255.,
+        rotation_range=40,
         width_shift_range=0.2,
         height_shift_range=0.2,
         shear_range=0.2,
@@ -113,13 +112,10 @@ for layer in base_model.layers:
 clr_triangular = CyclicLR(mode='triangular')
 model.compile(optimizer= Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
-filepath= "../snapshots/top_layers/top_layers.h5"
-
 ##############################y code
 #Save the model after every epoch.
-
+filepath= top_layers_checkpoint_path + "toplayer_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
 mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
-checkpoints =[mc_top]
 STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
 STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
 
