@@ -21,6 +21,9 @@ from keras import regularizers, optimizers
 import pandas as pd
 import numpy as np
 
+from keras.callbacks import *
+from clr_callback import *
+
 from keras.models import load_model
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
