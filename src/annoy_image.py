@@ -19,51 +19,15 @@ from annoy import AnnoyIndex
 import env
 import control
 
-def _index_and_search(posts, k, query_id):
-    .0xb = []                         # array to be indexed
-    data = posts["hits"]["hits"]
-    if len(data) == 0:
-        return {"message":"no items found for filter"}
+xb = traindf["vector"].tolist()
+query_vector = [] #vector to be queried
 
-    # print("data length in index: "+str(len(data)))
-    for i, item in enumerate(list(data)):
-        xb.append(item["_source"]["vector"])
+xb.append(query_vector)
 
-    d = VECTOR_DIMENSION
-    nb = len(xb)                 # database size
-    nq = QUERY_LENGTH                      # nb of queries
-
-    query_vector = [] # vector to be queried
-    terms = {"_id":[query_id]}
-    filter = [{"terms": terms}]
-    l, query_post = es_search._search_single(filter)
-    if l == 0:
-        return {"message":"query_id not found in database"}
-    else:
-        # print("append query vector to xb")
-        query_vector = query_post["_source"]["vector"]
-        xb.append(query_vector)
-        data.append(query_post)
-    # print("Start Indexing"+str(datetime.datetime.now()))
-    annoy_index(d, xb)
-    # print("End Indexing"+str(datetime.datetime.now()))
-
-    xq = 0
-
-    if l == 0:
-        return {"message":"query_id not found in database"}
-    else:
-        query_vector = query_post["_source"]["vector"]
-        try:
-            xq = xb.index(query_vector)
-            # print("Start Searching"+str(datetime.datetime.now()))
-            I = annoy_search(xq, 'annoy_index.ann', k, d) # search results
-            # print("End Searching"+str(datetime.datetime.now()))
-            # return {"I":I}
-            return explain_result(I, data, query_post)
-        except Exception as e:
-            raise
-            return {"message":"query_id not found in index"}
+annoy_index(d, xb)
+xq = xb.index(query_vector)
+I = annoy_search(xq, 'annoy_index.ann', k, d)
+explain_result(I, data, query_post)
 
 def get_value_for_key(key, object):
     if key in object:
