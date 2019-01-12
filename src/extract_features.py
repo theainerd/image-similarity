@@ -19,6 +19,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
 model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_03_0.58.h5")
+# model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_01_0.46.h5")
 
 intermediate_layer_model = Model(inputs=model.input,
                                      outputs=[
@@ -39,6 +40,7 @@ def extract_vector(image_path):
     preds = intermediate_layer_model.predict(image)
     preds = preds[0]
     preds = preds.tolist()
+    print("Extracting Image"+image_path)
     return preds
 
 
@@ -46,6 +48,7 @@ def extract_vector(image_path):
 traindf = pd.read_csv("../data/category_data.csv")
 traindf['id'] = "../data/"+traindf['id']
 traindf['vectors'] = traindf['label']
+traindf = traindf[:2]
 traindf['vectors'] = traindf['id'].map(lambda x: extract_vector(x))
 traindf = traindf['vectors']
 
