@@ -1,10 +1,10 @@
-# # import comet_ml in the top of your file
-# from comet_ml import Experiment
-#
-# # Add the following code anywhere in your machine learning file
-# experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
-#                         project_name="image-similarity", workspace="theainerd")
-#
+# import comet_ml in the top of your file
+from comet_ml import Experiment
+
+# Add the following code anywhere in your machine learning file
+experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
+                        project_name="image-similarity", workspace="theainerd")
+
 
 import pandas as pd
 import numpy as np
