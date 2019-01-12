@@ -92,11 +92,6 @@ predictions = Dense(46, activation='softmax')(x)
 # this is the model we will train
 model = Model(inputs=base_model.input, outputs=predictions)
 
-if os.path.exists(top_layers_checkpoint_path):
-	model.load_weights(top_layers_checkpoint_path)
-	print ("Checkpoint '" + top_layers_checkpoint_path + "' loaded.")
-
-
 # if os.path.exists(top_layers_checkpoint_path):
 # 	model.load_weights(top_layers_checkpoint_path)
 # 	print ("Checkpoint '" + top_layers_checkpoint_path + "' loaded.")
