@@ -1,10 +1,10 @@
-# import comet_ml in the top of your file
-from comet_ml import Experiment
-
-# Add the following code anywhere in your machine learning file
-experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
-                        project_name="image-similarity", workspace="theainerd")
-
+# # import comet_ml in the top of your file
+# from comet_ml import Experiment
+#
+# # Add the following code anywhere in your machine learning file
+# experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
+#                         project_name="image-similarity", workspace="theainerd")
+#
 
 import pandas as pd
 import numpy as np
@@ -16,10 +16,16 @@ from keras.applications.inception_v3 import InceptionV3
 from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
 from keras.layers import Conv2D, MaxPooling2D
 from keras import regularizers, optimizers
+from keras.optimizers import Adam
+
+from keras.callbacks import *
+from clr_callback import *
+
 import pandas as pd
 import numpy as np
 import os
 
+from sklearn.utils import class_weight
 from keras.models import load_model
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
@@ -29,7 +35,13 @@ from sklearn.utils import shuffle
 experiment_name = "image-similarity"
 
 traindf = pd.read_csv("../data/category_data.csv")
+traindf = traindf[['id','label']]
 traindf = shuffle(traindf)
+
+class_weights = class_weight.compute_class_weight('balanced',
+                                                 np.unique(traindf['label']),
+                                                 traindf['label'])
+
 
 final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
 
@@ -98,8 +110,8 @@ for layer in base_model.layers:
     layer.trainable = False
 
 # compile the model (should be done *after* setting layers to non-trainable)
-
-model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+clr_triangular = CyclicLR(mode='triangular')
+model.compile(optimizer= Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 filepath= "../snapshots/top_layers/top_layers.h5"
 
@@ -116,7 +128,8 @@ model.fit_generator(generator=train_generator,
                     validation_data=valid_generator,
                     validation_steps=STEP_SIZE_VALID,
                     epochs=20,
-                    callbacks = checkpoints)
+                    class_weight=class_weights,
+                    callbacks = [mc_top,clr_triangular])
 
 
 model.evaluate_generator(generator=valid_generator)

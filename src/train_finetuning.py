@@ -33,6 +33,13 @@ model = load_model("../snapshots/top_layers/top_layers.h5")
 experiment_name = "image-similarity"
 
 traindf = pd.read_csv("../data/category_data.csv")
+traindf = traindf[['id','label']]
+traindf = shuffle(traindf)
+
+class_weights = class_weight.compute_class_weight('balanced',
+                                                 np.unique(traindf['label']),
+                                                 traindf['label'])
+
 traindf = shuffle(traindf)
 
 top_layers_checkpoint_path = "../snapshots/top_layers/top_layers.h5"
@@ -89,8 +96,8 @@ for layer in model.layers[172:]:
 
 # we need to recompile the model for these modifications to take effect
 # we use SGD with a low learning rate
-from keras.optimizers import SGD
-model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy', metrics=['accuracy'])
+from keras.optimizers import Adam
+model.compile(optimizer=Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 # we train our model again (this time fine-tuning the top 2 inception blocks
 # alongside the top Dense layers
@@ -99,7 +106,6 @@ model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossent
 filepath= fine_tuned_checkpoint_path + "fine_tuned_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
 #Save the model after every epoch.
 mc_fit = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
-checkpoints =[mc_fit]
 
 
 STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
@@ -110,7 +116,8 @@ model.fit_generator(generator=train_generator,
                     validation_data=valid_generator,
                     validation_steps=STEP_SIZE_VALID,
                     epochs=20,
-                    callbacks = checkpoints)
+                    class_weight=class_weights
+                    callbacks = [clr_triangular,mc_fit])
 
 
 
