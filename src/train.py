@@ -9,7 +9,7 @@ experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
 import pandas as pd
 import numpy as np
 from keras.models import Model,Sequential
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import *
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization,GlobalMaxPooling2D
 from keras.applications.inception_v3 import InceptionV3
@@ -17,9 +17,6 @@ from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
 from keras.layers import Conv2D, MaxPooling2D
 from keras import regularizers, optimizers
 from keras.optimizers import Adam
-
-from keras.callbacks import *
-from clr_callback import *
 
 import pandas as pd
 import numpy as np
