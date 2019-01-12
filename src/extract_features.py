@@ -48,7 +48,6 @@ def extract_vector(image_path):
 traindf = pd.read_csv("../data/category_data.csv")
 traindf['id'] = "../data/"+traindf['id']
 traindf['vectors'] = traindf['label']
-traindf = traindf[:2]
 traindf['vectors'] = traindf['id'].map(lambda x: extract_vector(x))
 traindf = traindf['vectors']
 
