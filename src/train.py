@@ -123,7 +123,7 @@ model.fit_generator(generator=train_generator,
                     steps_per_epoch=STEP_SIZE_TRAIN,
                     validation_data=valid_generator,
                     validation_steps=STEP_SIZE_VALID,
-                    epochs=20,
+                    epochs=5,
                     class_weight=class_weights,
                     callbacks = [mc_top,clr_triangular])
 
