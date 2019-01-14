@@ -12,9 +12,9 @@ data_p_files=[]
 for name in glob.glob(pickle_path + "data_*.pkl"):
     data_p_files.append(name)
 
-traindf = pd.DataFrame([])
+data = pd.DataFrame([])
 for i in range(len(data_p_files)):
-    traindf = traindf.append(pd.read_pickle(data_p_files[i]),ignore_index=True)
+    data = data.append(pd.read_pickle(data_p_files[i]),ignore_index=True)
 
 print(traindf)
 
