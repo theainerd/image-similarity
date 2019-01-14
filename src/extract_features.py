@@ -56,7 +56,7 @@ reader = pd.read_csv(in_path,sep=separator,chunksize=chunk_size)
 i=0
 for chunk in reader:
     chunk['vector'] = chunk['id'].map(lambda x: extract_vector(x))
-    out_file = out_path + "/data_{}.pkl".format(i)
+    out_file = out_path + "data_{}.pkl".format(i)
     with open(out_file, "wb") as f:
         pickle.dump(chunk,f,pickle.HIGHEST_PROTOCOL)
     i+=1
