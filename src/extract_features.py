@@ -18,7 +18,7 @@ from keras.models import load_model
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
-model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_03_0.58.h5")
+model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_01_0.46.h5")
 # model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_01_0.46.h5")
 
 intermediate_layer_model = Model(inputs=model.input,
@@ -43,12 +43,20 @@ def extract_vector(image_path):
     print("Extracting Image"+image_path)
     return preds
 
+import pandas as pd
+import pickle
 
+in_path = "../data/category_data.csv" #Path where the large file is
+out_path = "../data/pickle/" #Path to save the pickle files to
+chunk_size = 500 #size of chunks relies on your available memory
+separator = ","
 
-traindf = pd.read_csv("../data/category_data.csv")
-traindf['id'] = "../data/"+traindf['id']
-traindf['vectors'] = traindf['label']
-traindf['vectors'] = traindf['id'].map(lambda x: extract_vector(x))
-traindf = traindf['vectors']
+reader = pd.read_csv(in_path,sep=separator,chunksize=chunk_size)
 
-traindf.to_pickle("../data/feature_vector.pkl")
+i=0
+for chunk in reader:
+    chunk['vector'] = chunk['id'].map(lambda x: extract_vector(x))
+    out_file = out_path + "/data_{}.pkl".format(i)
+    with open(out_file, "wb") as f:
+        pickle.dump(chunk,f,pickle.HIGHEST_PROTOCOL)
+    i+=1
