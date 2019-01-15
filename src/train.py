@@ -56,32 +56,44 @@ datagen=ImageDataGenerator(rescale=1./255.,
         height_shift_range=0.2,
         shear_range=0.2,
         zoom_range=0.2,
-        horizontal_flip=True,
         validation_split=0.25)
 
-train_generator=datagen.flow_from_dataframe(
-dataframe=traindf,
-directory="../data/",
-x_col="id",
-y_col="label",
-subset="training",
-batch_size=32,
-seed=42,
-shuffle=True,
-class_mode="categorical",
-target_size=(224,224))
+image_size = 224
 
-valid_generator=datagen.flow_from_dataframe(
-dataframe=traindf,
-directory="../data/",
-x_col="id",
-y_col="label",
-subset="validation",
-batch_size=32,
-seed=42,
-shuffle=True,
-class_mode="categorical",
-target_size=(224,224))
+train_generator = datagen.flow_from_directory(
+        '../input/urban-and-rural-photos/rural_and_urban_photos/train',
+        target_size=(image_size, image_size),
+        batch_size=24,
+        class_mode='categorical')
+
+valid_generator = datagen.flow_from_directory(
+        '../input/urban-and-rural-photos/rural_and_urban_photos/val',
+        target_size=(image_size, image_size),
+        class_mode='categorical')
+
+# train_generator=datagen.flow_from_dataframe(
+# dataframe=traindf,
+# directory="../data/",
+# x_col="id",
+# y_col="label",
+# subset="training",
+# batch_size=32,
+# seed=42,
+# shuffle=True,
+# class_mode="categorical",
+# target_size=(224,224))
+
+# valid_generator=datagen.flow_from_dataframe(
+# dataframe=traindf,
+# directory="../data/",
+# x_col="id",
+# y_col="label",
+# subset="validation",
+# batch_size=32,
+# seed=42,
+# shuffle=True,
+# class_mode="categorical",
+# target_size=(224,224))
 
 
 print("Downloading Base Model.....")
@@ -112,8 +124,10 @@ model.compile(optimizer= 'rmsprop', loss='categorical_crossentropy', metrics=['a
 
 ##############################y code
 #Save the model after every epoch.
+
 filepath= top_layers_checkpoint_path + "toplayer_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
 mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
+
 STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
 STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
 
@@ -124,7 +138,6 @@ model.fit_generator(generator=train_generator,
                     epochs=5,
                     class_weight=class_weights,
                     callbacks = [mc_top])
-
 
 model.evaluate_generator(generator=valid_generator)
 model.save(top_layers_checkpoint_path)

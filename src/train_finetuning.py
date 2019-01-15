@@ -55,32 +55,54 @@ datagen=ImageDataGenerator(rescale=1./255.,
             height_shift_range=0.2,
             shear_range=0.2,
             zoom_range=0.2,
-            horizontal_flip=True,
             validation_split=0.20)
 
-train_generator=datagen.flow_from_dataframe(
-dataframe=traindf,
-directory="../data/",
-x_col="id",
-y_col="label",
-subset="training",
-batch_size=32,
-seed=42,
-shuffle=True,
-class_mode="categorical",
-target_size=(224,224))
 
-valid_generator=datagen.flow_from_dataframe(
-dataframe=traindf,
-directory="../data/",
-x_col="id",
-y_col="label",
-subset="validation",
-batch_size=32,
-seed=42,
-shuffle=True,
-class_mode="categorical",
-target_size=(224,224))
+datagen=ImageDataGenerator(rescale=1./255.,
+        rotation_range=40,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        shear_range=0.2,
+        zoom_range=0.2,
+        validation_split=0.25)
+
+image_size = 224
+
+train_generator = datagen.flow_from_directory(
+        '../input/urban-and-rural-photos/rural_and_urban_photos/train',
+        target_size=(image_size, image_size),
+        batch_size=24,
+        class_mode='categorical')
+
+valid_generator = datagen.flow_from_directory(
+        '../input/urban-and-rural-photos/rural_and_urban_photos/val',
+        target_size=(image_size, image_size),
+        class_mode='categorical')
+
+
+# train_generator=datagen.flow_from_dataframe(
+# dataframe=traindf,
+# directory="../data/",
+# x_col="id",
+# y_col="label",
+# subset="training",
+# batch_size=32,
+# seed=42,
+# shuffle=True,
+# class_mode="categorical",
+# target_size=(224,224))
+
+# valid_generator=datagen.flow_from_dataframe(
+# dataframe=traindf,
+# directory="../data/",
+# x_col="id",
+# y_col="label",
+# subset="validation",
+# batch_size=32,
+# seed=42,
+# shuffle=True,
+# class_mode="categorical",
+# target_size=(224,224))
 
 
 if os.path.exists(fine_tuned_checkpoint_path):
@@ -121,7 +143,6 @@ model.fit_generator(generator=train_generator,
                     epochs=20,
                     class_weight=class_weights
                     callbacks = [clr_triangular,mc_fit])
-
 
 
 model.evaluate_generator(generator=valid_generator)
