@@ -1,9 +1,9 @@
-# import comet_ml in the top of your file
-from comet_ml import Experiment
+# # import comet_ml in the top of your file
+# from comet_ml import Experiment
 
-# Add the following code anywhere in your machine learning file
-experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
-                        project_name="image-similarity", workspace="theainerd")
+# # Add the following code anywhere in your machine learning file
+# experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
+#                         project_name="image-similarity", workspace="theainerd")
 
 
 import pandas as pd
@@ -36,8 +36,9 @@ experiment_name = "image-similarity"
 
 traindf = pd.read_csv("../data/category_data.csv")
 traindf = traindf[['id','label']]
-traindf = shuffle(traindf)
-
+print(traindf.head(10))
+traindf = traindf.sample(frac=1).reset_index(drop=True)
+print(traindf.head(10))
 class_weights = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['label']),
                                                  traindf['label'])
