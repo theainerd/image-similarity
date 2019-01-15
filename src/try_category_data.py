@@ -68,5 +68,3 @@ for i in final_data_dict.keys():
     label.append(i)
 dataframe = pd.DataFrame({'id':img,'label':label})
 dataframe.to_csv("../data/category_data001.csv",index = False)
-
-print(dataframe.head())

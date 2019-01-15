@@ -32,7 +32,7 @@ from sklearn.utils import shuffle
 
 
 
-model = load_model("../snapshots/top_layers/top_layers.h5")
+# model = load_model("../snapshots/top_layers/top_layers.h5")
 experiment_name = "image-similarity"
 
 traindf = pd.read_csv("../data/category_data.csv")
@@ -43,7 +43,6 @@ class_weights = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['label']),
                                                  traindf['label'])
 
-traindf = shuffle(traindf)
 
 top_layers_checkpoint_path = "../snapshots/top_layers/top_layers.h5"
 fine_tuned_checkpoint_path = "../snapshots/fine_tuned/"
@@ -87,7 +86,6 @@ target_size=(224,224))
 if os.path.exists(fine_tuned_checkpoint_path):
 	model.load_weights("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_03_0.55.h5")
 	print ("Checkpoint" + fine_tuned_checkpoint_path + " loaded.")
-#
 
 # we chose to train the top 2 inception blocks, i.e. we will freeze
 # the first 172 layers and unfreeze the rest:

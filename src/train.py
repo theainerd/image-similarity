@@ -41,7 +41,8 @@ traindf = shuffle(traindf)
 class_weights = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['label']),
                                                  traindf['label'])
-
+print(class_weights)
+print(traindf['label'].value_counts())
 
 top_layers_checkpoint_path = "../snapshots/top_layers/"
 fine_tuned_checkpoint_path = "../snapshots/fine_tuned/fine_tuned.h5"
@@ -104,8 +105,8 @@ for layer in base_model.layers:
     layer.trainable = False
 
 # compile the model (should be done *after* setting layers to non-trainable)
-clr_triangular = CyclicLR(mode='triangular')
-model.compile(optimizer= Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+
+model.compile(optimizer= 'rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
 ##############################y code
 #Save the model after every epoch.
@@ -120,7 +121,7 @@ model.fit_generator(generator=train_generator,
                     validation_steps=STEP_SIZE_VALID,
                     epochs=5,
                     class_weight=class_weights,
-                    callbacks = [mc_top,clr_triangular])
+                    callbacks = [mc_top])
 
 
 model.evaluate_generator(generator=valid_generator)
