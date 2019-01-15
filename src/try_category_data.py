@@ -52,10 +52,21 @@ for i in c_s_dict.keys():
 
 import csv
 
-with open('../data/category_data001.csv', 'w') as csv_file:
-    writer = csv.writer(csv_file)
-    writer.writerow(('colum1', 'colum2'))
-    for key, value in final_data_dict.items():
-        for i in value:
-            writer.writerow([key,value])
-    
+# with open('../data/category_data001.csv', 'w') as csv_file:
+#     writer = csv.writer(csv_file)
+#     writer.writerow(('id', 'label'))
+#     for key, value in final_data_dict.items():
+#         for i in value:
+#             writer.writerow([i,key])
+
+
+img=[]
+label=[]
+for i in final_data_dict.keys():
+  for j in final_data_dict[i]:
+    img.append(j)
+    label.append(i)
+dataframe = pd.DataFrame({'id':img,'label':label})
+dataframe.to_csv("../data/category_data001.csv",index = False)
+
+print(dataframe.head())
