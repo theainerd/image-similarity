@@ -34,10 +34,6 @@ from sklearn.utils import class_weight
 import pandas as pd
 
 
-# Add the following code anywhere in your machine learning file
-experiment = Experiment(api_key="yjMRVBpNslRTXrFb2lMjUz2pi",
-                        project_name="L2_gd_fine")
-
 #configurations
 epochs = 50
 batch_size = 384
