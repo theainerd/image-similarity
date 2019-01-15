@@ -29,8 +29,8 @@ experiment = Experiment(api_key="yjMRVBpNslRTXrFb2lMjUz2pi",
 epochs = 50
 batch_size = 384
 dropout = 0.5
-no_of_classes = 21
-data_dir = "data/IntuL2-split/"
+no_of_classes = 46
+data_dir = "data/Deepfashion-subset-split/"
 # base_model_path = "models/L2/IntuL2-classification_inceptionv3_bottleneck_16_0.61.h5"
 base_model_path = "models/L2-gd/IntuL2-classification_inceptionv3_bottleneck_11_0.60.h5"
 output_models_dir = "models/L2-fine/"
