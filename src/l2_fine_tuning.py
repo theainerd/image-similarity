@@ -21,6 +21,10 @@ from keras.callbacks import Callback
 from keras.preprocessing.image import img_to_array
 from keras.applications import imagenet_utils
 
+from keras.callbacks import *
+from clr_callback import *
+
+
 # Add the following code anywhere in your machine learning file
 experiment = Experiment(api_key="yjMRVBpNslRTXrFb2lMjUz2pi",
                         project_name="L2_gd_fine")
@@ -32,18 +36,24 @@ dropout = 0.5
 no_of_classes = 46
 data_dir = "data/Deepfashion-subset-split/"
 # base_model_path = "models/L2/IntuL2-classification_inceptionv3_bottleneck_16_0.61.h5"
-base_model_path = "models/L2-gd/IntuL2-classification_inceptionv3_bottleneck_11_0.60.h5"
+base_model_path = "models/L2-gd/image-similarity_inceptionv3_bottleneck_11_0.60.h5"
 output_models_dir = "models/L2-fine/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "L2-fine-tuning"
-class_weight = {0:1,1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1,9:1,
-10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:1,18:1,19:1,20:1}
+experiment_name = "image-similarity-finetuning"
+
 img_width, img_height = 299, 299
 final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
 
 confusion_matrix_directory = 'path/to/data' # format same as train
 original_img_width, original_img_height = 400, 400
+
+traindf = pd.read_csv("../data/category_data.csv")
+traindf = traindf[['id','label']]
+class_weight = class_weight.compute_class_weight('balanced',
+                                                 np.unique(traindf['label']),
+                                                 traindf['label'])
+
 
 #call back for confusion matrix
 
@@ -159,10 +169,11 @@ for layer in model.layers[:249]:
 for layer in model.layers[249:]:
   layer.trainable = True
 
+clr_triangular = CyclicLR(mode='triangular')
 model.compile(optimizer=optimizers.SGD(lr=1e-4, momentum=0.9), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_finetuning_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint]
+checkpoints =[checkpoint,clr_triangular]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
 model.save(final_model_name)

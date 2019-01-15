@@ -38,7 +38,7 @@ batch_size = 500
 dropout = 0.5
 no_of_classes = 46
 data_dir = "../data/Deepfashion-subset-split/"
-output_models_dir = "models/L2/"
+output_models_dir = "../models/L2/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "image-similarity"
@@ -49,6 +49,9 @@ validate_images = True
 
 traindf = pd.read_csv("../data/category_data.csv")
 traindf = traindf[['id','label']]
+class_weight = class_weight.compute_class_weight('balanced',
+                                                 np.unique(traindf['label']),
+                                                 traindf['label'])
 
 
 if validate_images:
@@ -145,9 +148,7 @@ class Metrics(Callback):
 metrics1 = Metrics()
 
 
-class_weight = class_weight.compute_class_weight('balanced',
-                                                 np.unique(traindf['label']),
-                                                 traindf['label'])
+
 
 datagen = ImageDataGenerator(
         rotation_range=40,
