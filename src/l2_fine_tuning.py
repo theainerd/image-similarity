@@ -1,4 +1,10 @@
+# import comet_ml in the top of your file
 from comet_ml import Experiment
+
+# Add the following code anywhere in your machine learning file
+experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
+                        project_name="image-similarity", workspace="theainerd")
+
 from keras.preprocessing.image import ImageDataGenerator
 from keras import optimizers
 from keras.models import Sequential
@@ -23,6 +29,9 @@ from keras.applications import imagenet_utils
 
 from keras.callbacks import *
 from clr_callback import *
+
+from sklearn.utils import class_weight
+import pandas as pd
 
 
 # Add the following code anywhere in your machine learning file
