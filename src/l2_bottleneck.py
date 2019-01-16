@@ -44,7 +44,7 @@ validation_data_dir = data_dir + 'validation'
 experiment_name = "image-similarity"
 img_width, img_height = 299, 299
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
+final_model_name = experiment_name + '_inceptionv3_bottleneck_		final.h5'
 validate_images = True
 
 traindf = pd.read_csv("../data/category_data.csv")
