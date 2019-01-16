@@ -19,7 +19,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
 # model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_03_0.58.h5")
-model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_01_0.46.h5")
+model = load_model("../models/image-similarity-finetuning_inceptionv3_finetuning_17_0.53.h5")
 
 intermediate_layer_model = Model(inputs=model.input,
                                      outputs=[
@@ -56,6 +56,7 @@ reader = pd.read_csv(in_path,sep=separator,chunksize=chunk_size)
 i=0
 for chunk in reader:
     print(chunk)
+    chunk['vector'] = 0
     chunk['vector'] = chunk['id'].map(lambda x: extract_vector(x))
     out_file = out_path + "data_{}.pkl".format(i)
     with open(out_file, "wb") as f:
