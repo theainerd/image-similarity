@@ -10,6 +10,7 @@ from keras import optimizers
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
+from keras.applications.resnet50 import ResNet50
 from keras.models import Model
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
@@ -41,14 +42,14 @@ dropout = 0.5
 no_of_classes = 46
 data_dir = "../data/Deepfashion-subset-split/"
 # base_model_path = "models/L2/IntuL2-classification_inceptionv3_bottleneck_16_0.61.h5"
-base_model_path = "../models/L2/image-similarity-finetuning_inceptionv3_finetuning_18_0.53.h5"
+base_model_path = "../models/L2/image-similarity-finetuning_resnet_finetuning_18_0.53.h5"
 output_models_dir = "../models/L2-fine/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "image-similarity-finetuning"
 
 img_width, img_height = 299, 299
-final_model_name = experiment_name + '_inceptionv3_finetuning_final.h5'
+final_model_name = experiment_name + '_resnet_finetuning_final.h5'
 
 confusion_matrix_directory = 'path/to/data' # format same as train
 original_img_width, original_img_height = 400, 400
@@ -177,7 +178,7 @@ for layer in model.layers[249:]:
 clr_triangular = CyclicLR(mode='triangular')
 model.compile(optimizer=optimizers.SGD(lr=1e-4, momentum=0.9), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
-filepath= output_models_dir + experiment_name + "_inceptionv3_finetuning_{epoch:02d}_{val_acc:.2f}.h5"
+filepath= output_models_dir + experiment_name + "_resnet_finetuning_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint,clr_triangular]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)

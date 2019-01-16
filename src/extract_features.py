@@ -22,6 +22,7 @@ from sklearn.preprocessing import LabelBinarizer
 base_model = InceptionV3(include_top=False, weights='imagenet')
 
 base_model.summary()
+
 # model = load_model("../models/image-similarity-finetuning_inceptionv3_finetuning_17_0.53.h5")
 
 # intermediate_layer_model = Model(inputs=model.input,
@@ -60,9 +61,9 @@ def extract_vector(image_path):
     image = np.expand_dims(image, axis=0)
     # preds = intermediate_layer_model.predict(image)
     preds = base_model.predict(image)
-    preds = preds[0][0]
+    preds = preds[0]
     print("Extracting Image"+image_path)
-    print(preds)
+    print(len(preds))
     return preds
 
 import pandas as pd

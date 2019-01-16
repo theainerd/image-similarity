@@ -11,6 +11,7 @@ from keras import optimizers
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
+from keras.applications.resnet50 import ResNet50
 from keras.models import Model
 from keras.callbacks import ModelCheckpoint
 from keras.regularizers import l2
@@ -32,7 +33,9 @@ from keras.applications import imagenet_utils
 from sklearn.utils import class_weight
 import pandas as pd
 
+
 #configurations
+
 epochs = 50
 batch_size = 500
 dropout = 0.5
@@ -44,7 +47,7 @@ validation_data_dir = data_dir + 'validation'
 experiment_name = "image-similarity"
 img_width, img_height = 299, 299
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_inceptionv3_bottleneck_		final.h5'
+final_model_name = experiment_name + '_resnet50_bottleneck_final.h5'
 validate_images = True
 
 traindf = pd.read_csv("../data/category_data.csv")
@@ -176,7 +179,7 @@ validation_generator = test_datagen.flow_from_directory(
 	class_mode="categorical",
 	shuffle=True)
 
-base_model = InceptionV3(include_top=False, weights='imagenet')
+base_model = ResNet50(include_top=False, weights='imagenet')
 # get layers and add average pooling layer
 ## set model architechture
 x = base_model.output
@@ -186,12 +189,13 @@ x = Dense(1024, activation='relu')(x)
 x = Dropout(dropout)(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
 model = Model(input=base_model.input, output=predictions)
+print(model.summary())
 
 for layer in base_model.layers:
     layer.trainable = False
 model.compile(optimizer='rmsprop', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
-filepath= output_models_dir + experiment_name + "_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
+filepath= output_models_dir + experiment_name + "_resnet50_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
