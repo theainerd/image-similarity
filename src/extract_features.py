@@ -65,22 +65,22 @@ def extract_vector(image_path):
     print(preds)
     return preds
 
-# import pandas as pd
-# import pickle
+import pandas as pd
+import pickle
 
-# in_path = "../data/category_data.csv" #Path where the large file is
-# out_path = "../data/pickle1/" #Path to save the pickle files to
-# chunk_size = 500 #size of chunks relies on your available memory
-# separator = ","
+in_path = "../data/category_data.csv" #Path where the large file is
+out_path = "../data/pickle1/" #Path to save the pickle files to
+chunk_size = 500 #size of chunks relies on your available memory
+separator = ","
 
-# reader = pd.read_csv(in_path,sep=separator,chunksize=chunk_size)
+reader = pd.read_csv(in_path,sep=separator,chunksize=chunk_size)
 
-# i=0
-# for chunk in reader:
-#     print(chunk)
-#     chunk['vector'] = 0
-#     chunk['vector'] = chunk['id'].map(lambda x: extract_vector(x))
-#     out_file = out_path + "data_{}.pkl".format(i)
-#     with open(out_file, "wb") as f:
-#         pickle.dump(chunk,f,pickle.HIGHEST_PROTOCOL)
-#     i+=1
+i=0
+for chunk in reader:
+    print(chunk)
+    chunk['vector'] = 0
+    chunk['vector'] = chunk['id'].map(lambda x: extract_vector(x))
+    out_file = out_path + "data_{}.pkl".format(i)
+    with open(out_file, "wb") as f:
+        pickle.dump(chunk,f,pickle.HIGHEST_PROTOCOL)
+    i+=1
