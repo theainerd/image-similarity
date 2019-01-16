@@ -41,7 +41,7 @@ def extract_vector(image_path):
     image = np.divide(image,255.0) #rescaling
     image = np.expand_dims(image, axis=0)
     # preds = intermediate_layer_model.predict(image)
-    preds = intermediate_layer_model.predict(image)
+    preds = base_model.predict(image)
     preds = preds[0]
     preds = preds.tolist()
     print("Extracting Image"+image_path)
