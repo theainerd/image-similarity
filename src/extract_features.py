@@ -51,7 +51,7 @@ import pandas as pd
 import pickle
 
 in_path = "../data/category_data.csv" #Path where the large file is
-out_path = "../data/pickle/" #Path to save the pickle files to
+out_path = "../data/pickle1/" #Path to save the pickle files to
 chunk_size = 500 #size of chunks relies on your available memory
 separator = ","
 
