@@ -19,12 +19,15 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
 
 # model = load_model("../snapshots/fine_tuned/fine_tuned_inceptionv3_bottleneck_03_0.58.h5")
-model = load_model("../models/image-similarity-finetuning_inceptionv3_finetuning_17_0.53.h5")
+base_model = InceptionV3(include_top=False, weights='imagenet')
 
-intermediate_layer_model = Model(inputs=model.input,
-                                     outputs=[
-                                     model.get_layer('dense_1').output
-                                     ])
+# base_model.summary()
+# model = load_model("../models/image-similarity-finetuning_inceptionv3_finetuning_17_0.53.h5")
+
+# intermediate_layer_model = Model(inputs=model.input,
+#                                      outputs=[
+#                                      model.get_layer('dense_1').output
+#                                      ])
 
 def extract_vector(image_path):
     final_width = 229
@@ -37,6 +40,7 @@ def extract_vector(image_path):
     image = img_to_array(image)
     image = np.divide(image,255.0) #rescaling
     image = np.expand_dims(image, axis=0)
+    # preds = intermediate_layer_model.predict(image)
     preds = intermediate_layer_model.predict(image)
     preds = preds[0]
     preds = preds.tolist()
