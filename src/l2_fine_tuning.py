@@ -36,12 +36,12 @@ import pandas as pd
 
 #configurations
 epochs = 50
-batch_size = 384
+batch_size = 500
 dropout = 0.5
 no_of_classes = 46
 data_dir = "../data/Deepfashion-subset-split/"
 # base_model_path = "models/L2/IntuL2-classification_inceptionv3_bottleneck_16_0.61.h5"
-base_model_path = "../models/L2/image-similarity_inceptionv3_bottleneck_05_0.39.h5"
+base_model_path = "../models/L2/image-similarity-finetuning_inceptionv3_finetuning_18_0.53.h5"
 output_models_dir = "../models/L2-fine/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
