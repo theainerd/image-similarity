@@ -60,7 +60,7 @@ def extract_vector(image_path):
     image = np.expand_dims(image, axis=0)
     # preds = intermediate_layer_model.predict(image)
     preds = base_model.predict(image)
-    preds = preds[0]
+    preds = preds[0][0]
     print("Extracting Image"+image_path)
     print(preds)
     return preds
