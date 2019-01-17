@@ -7,7 +7,8 @@ experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
 
 
 from keras.preprocessing.image import ImageDataGenerator
-from keras.optimizers import Adam 
+from keras.optimizers import Adam
+from keras.optimizers import SGD 
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.regularizers import l2
@@ -56,7 +57,6 @@ traindf = traindf[['id','label']]
 class_weight = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['label']),
                                                  traindf['label'])
-
 
 if validate_images:
     i = 0
@@ -183,14 +183,18 @@ validation_generator = test_datagen.flow_from_directory(
 base_model = ResNet50(include_top=False, weights='imagenet',pooling='avg')
 # get layers and add average pooling layer
 ## set model architechture
+
+for layer in base_model.layers[:-12]:
+    layer.trainable = False
+
 x = base_model.output
 x = Dense(1024, activation='relu', kernel_regularizer=l2(0.001))(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
 model = Model(input=base_model.input, output=predictions)
 
-for layer in base_model.layers:
-    layer.trainable = False
-model.compile(optimizer= Adam(0.001), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
+# for layer in base_model.layers:
+#     layer.trainable = False
+model.compile(optimizer= SGD(lr=0.0001, momentum=0.9, nesterov=True), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
 lr_reducer = ReduceLROnPlateau(monitor='val_loss',
                                patience=12,
@@ -200,7 +204,13 @@ lr_reducer = ReduceLROnPlateau(monitor='val_loss',
 
 filepath= output_models_dir + experiment_name + "_resnet50_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
+<<<<<<< HEAD
 checkpoints =[checkpoint,lr_reducer]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, 
 	class_weight=class_weight, callbacks=checkpoints)
 model.save(final_model_name)
+=======
+checkpoints =[checkpoint]
+model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
+model.save(final_model_name)
+>>>>>>> 9d54d6f0d4fd0553aac45fa39e927b0b02a26b10
