@@ -184,7 +184,6 @@ base_model = ResNet50(include_top=False, weights='imagenet',pooling='avg')
 # get layers and add average pooling layer
 ## set model architechture
 x = base_model.output
-x = GlobalAveragePooling2D()(x)
 x = Dense(1024, activation='relu', kernel_regularizer=l2(0.001))(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
 model = Model(input=base_model.input, output=predictions)
