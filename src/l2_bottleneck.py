@@ -7,13 +7,14 @@ experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
 
 
 from keras.preprocessing.image import ImageDataGenerator
-from keras import optimizers
+from keras.optimizers import Adam 
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
-from keras.applications.inception_v3 import InceptionV3
+from keras.regularizers import l2
+from keras.applications.resnet50 import preprocess_input
 from keras.applications.resnet50 import ResNet50
 from keras.models import Model
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint,ReduceLROnPlateau
 from keras.regularizers import l2
 import pickle
 import glob
@@ -45,7 +46,7 @@ output_models_dir = "../models/L2/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "image-similarity"
-img_width, img_height = 299, 299
+img_width, img_height = 244, 244
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_resnet50_bottleneck_final.h5'
 validate_images = True
@@ -151,17 +152,17 @@ class Metrics(Callback):
 metrics1 = Metrics()
 
 
+datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
 
-
-datagen = ImageDataGenerator(
-        rotation_range=40,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
-        rescale=1./255,
-        shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True,
-        fill_mode='nearest')
+# datagen = ImageDataGenerator(
+#         rotation_range=40,
+#         width_shift_range=0.2,
+#         height_shift_range=0.2,
+#         rescale=1./255,
+#         shear_range=0.2,
+#         zoom_range=0.2,
+#         horizontal_flip=True,
+#         fill_mode='nearest')
 
 test_datagen = ImageDataGenerator(rescale=1./255)
 
@@ -179,24 +180,28 @@ validation_generator = test_datagen.flow_from_directory(
 	class_mode="categorical",
 	shuffle=True)
 
-base_model = ResNet50(include_top=False, weights='imagenet')
+base_model = ResNet50(include_top=False, weights='imagenet',pooling='avg')
 # get layers and add average pooling layer
 ## set model architechture
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
-x = Dropout(dropout)(x)
-x = Dense(1024, activation='relu')(x)
-x = Dropout(dropout)(x)
+x = Dense(1024, activation='relu', kernel_regularizer=l2(0.001))(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
 model = Model(input=base_model.input, output=predictions)
-print(model.summary())
 
 for layer in base_model.layers:
     layer.trainable = False
-model.compile(optimizer='rmsprop', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
+model.compile(optimizer= Adam(0.001), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
+
+lr_reducer = ReduceLROnPlateau(monitor='val_loss',
+                               patience=12,
+                               factor=0.5,
+                               verbose=1)
+
 
 filepath= output_models_dir + experiment_name + "_resnet50_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
+checkpoints =[checkpoint,lr_reducer]
+model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, 
+	class_weight=class_weight, callbacks=checkpoints)
 model.save(final_model_name)
