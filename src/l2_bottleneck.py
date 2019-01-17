@@ -197,7 +197,7 @@ model = Model(input=base_model.input, output=predictions)
 model.compile(optimizer= SGD(lr=0.0001, momentum=0.9, nesterov=True), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
 lr_reducer = ReduceLROnPlateau(monitor='val_loss',
-                               patience=12,
+                               patience=4,
                                factor=0.5,
                                verbose=1)
 
@@ -209,8 +209,6 @@ checkpoints =[checkpoint,lr_reducer]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, 
 	class_weight=class_weight, callbacks=checkpoints)
 model.save(final_model_name)
-=======
 checkpoints =[checkpoint]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
 model.save(final_model_name)
->>>>>>> 9d54d6f0d4fd0553aac45fa39e927b0b02a26b10
