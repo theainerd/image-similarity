@@ -40,7 +40,7 @@ import pandas as pd
 #configurations
 
 epochs = 50
-batch_size = 250
+batch_size = 128
 dropout = 0.5
 data_dir = "../data/color_data_split/"
 output_models_dir = "../models/L2/"
