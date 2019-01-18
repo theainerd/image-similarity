@@ -37,7 +37,7 @@ import pandas as pd
 
 #configurations
 epochs = 50
-batch_size = 500
+batch_size = 64
 dropout = 0.5
 no_of_classes = 46
 data_dir = "../data/color_data_split/"
