@@ -39,24 +39,24 @@ import pandas as pd
 #configurations
 
 epochs = 50
-batch_size = 350
+batch_size = 250
 dropout = 0.5
-no_of_classes = 46
-data_dir = "../data/Deepfashion-subset-split/"
+data_dir = "../data/color_data_split/"
 output_models_dir = "../models/L2/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "image-similarity"
+experiment_name = "image-similarity-color"
 img_width, img_height = 244, 244
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_resnet50_bottleneck_final.h5'
+final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
 
-traindf = pd.read_csv("../data/category_data.csv")
-traindf = traindf[['id','label']]
+traindf = pd.read_csv("../data/colors_dataset.csv")
+traindf = traindf[['_id','color']]
+no_of_classes = len(traindf['color'].unique())
 class_weight = class_weight.compute_class_weight('balanced',
-                                                 np.unique(traindf['label']),
-                                                 traindf['label'])
+                                                 np.unique(traindf['color']),
+                                                 traindf['color'])
 
 if validate_images:
     i = 0
@@ -152,17 +152,16 @@ class Metrics(Callback):
 metrics1 = Metrics()
 
 
-datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
 
-# datagen = ImageDataGenerator(
-#         rotation_range=40,
-#         width_shift_range=0.2,
-#         height_shift_range=0.2,
-#         rescale=1./255,
-#         shear_range=0.2,
-#         zoom_range=0.2,
-#         horizontal_flip=True,
-#         fill_mode='nearest')
+datagen = ImageDataGenerator(
+        rotation_range=40,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        rescale=1./255,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True,
+        fill_mode='nearest')
 
 test_datagen = ImageDataGenerator(rescale=1./255)
 
@@ -180,32 +179,23 @@ validation_generator = test_datagen.flow_from_directory(
 	class_mode="categorical",
 	shuffle=True)
 
-base_model = ResNet50(include_top=False, weights='imagenet',pooling='avg')
-# get layers and add average pooling layer
-## set model architechture
+print("Downloading Base Model.....")
+base_model = InceptionV3(weights='imagenet', include_top=False)
 
-for layer in base_model.layers[:-12]:
-    layer.trainable = False
-
+# add a global spatial average pooling layer
 x = base_model.output
-x = Dense(1024, activation='relu', kernel_regularizer=l2(0.001))(x)
+x = GlobalMaxPooling2D()(x)
+# let's add a fully-connected layer
+x = Dense(1024, activation='relu')(x)
+# and a logistic layer -- we have 2 classes
 predictions = Dense(no_of_classes, activation='softmax')(x)
-model = Model(input=base_model.input, output=predictions)
 
-# for layer in base_model.layers:
-#     layer.trainable = False
-model.compile(optimizer= SGD(lr=0.0001, momentum=0.9, nesterov=True), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
+# this is the model we will train
+model = Model(inputs=base_model.input, outputs=predictions)
 
-lr_reducer = ReduceLROnPlateau(monitor='val_loss',
-                               patience=4,
-                               factor=0.5,
-                               verbose=1)
-
-
-filepath= output_models_dir + experiment_name + "_resnet50_{epoch:02d}_{val_acc:.2f}.h5"
+filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-<<<<<<< HEAD
-checkpoints =[checkpoint,lr_reducer]
+checkpoints =[checkpoint]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, 
 	class_weight=class_weight, callbacks=checkpoints)
 model.save(final_model_name)
