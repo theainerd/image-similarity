@@ -185,7 +185,8 @@ base_model = InceptionV3(weights='imagenet', include_top=False)
 
 # add a global spatial average pooling layer
 x = base_model.output
-x = GlobalMaxPooling2D()(x)
+x = GlobalAveragePooling2D()(x)
+
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
 # and a logistic layer -- we have 2 classes
