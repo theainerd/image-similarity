@@ -187,14 +187,15 @@ base_model = InceptionV3(weights='imagenet', include_top=False)
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
 
+x = Dropout(dropout)(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
-# and a logistic layer -- we have 2 classes
+x = Dropout(dropout)(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
 
 # this is the model we will train
 model = Model(inputs=base_model.input, outputs=predictions)
-model.compile(optimizer = Adam(0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
