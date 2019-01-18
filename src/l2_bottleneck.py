@@ -11,6 +11,7 @@ from keras.optimizers import Adam
 from keras.optimizers import SGD 
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
+from keras.applications.inception_v3 import InceptionV3
 from keras.regularizers import l2
 from keras.applications.resnet50 import preprocess_input
 from keras.applications.resnet50 import ResNet50

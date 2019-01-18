@@ -98,47 +98,48 @@ valid_generator = datagen.flow_from_directory(
 
 print("Downloading Base Model.....")
 base_model = InceptionV3(weights='imagenet', include_top=False)
-print(base_model.summary())
 
-# # add a global spatial average pooling layer
-# x = base_model.output
-# x = GlobalMaxPooling2D()(x)
-# # let's add a fully-connected layer
-# x = Dense(1024, activation='relu')(x)
-# # and a logistic layer -- we have 2 classes
-# predictions = Dense(46, activation='softmax')(x)
+# add a global spatial average pooling layer
+x = base_model.output
+x = GlobalMaxPooling2D()(x)
+# let's add a fully-connected layer
+x = Dropout(0.5)(x)
+x = Dense(1024, activation='relu')(x)
+x = Dropout(0.5)(x)
+# and a logistic layer -- we have 2 classes
+predictions = Dense(46, activation='softmax')(x)
 
-# # this is the model we will train
-# model = Model(inputs=base_model.input, outputs=predictions)
+# this is the model we will train
+model = Model(inputs=base_model.input, outputs=predictions)
 
-# # if os.path.exists(top_layers_checkpoint_path):
-# # 	model.load_weights(top_layers_checkpoint_path)
-# # 	print ("Checkpoint '" + top_layers_checkpoint_path + "' loaded.")
-# # first: train only the top layers (which were randomly initialized)
-# # i.e. freeze all convolutional InceptionV3 layers
-# for layer in base_model.layers:
-#     layer.trainable = False
+# if os.path.exists(top_layers_checkpoint_path):
+# 	model.load_weights(top_layers_checkpoint_path)
+# 	print ("Checkpoint '" + top_layers_checkpoint_path + "' loaded.")
+# first: train only the top layers (which were randomly initialized)
+# i.e. freeze all convolutional InceptionV3 layers
+for layer in base_model.layers:
+    layer.trainable = False
 
-# # compile the model (should be done *after* setting layers to non-trainable)
+# compile the model (should be done *after* setting layers to non-trainable)
 
-# model.compile(optimizer= 'rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer= 'rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# ##############################y code
-# #Save the model after every epoch.
+##############################y code
+#Save the model after every epoch.
 
-# filepath= top_layers_checkpoint_path + "toplayer_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
-# mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
+filepath= top_layers_checkpoint_path + "toplayer_inceptionv3_bottleneck_{epoch:02d}_{val_acc:.2f}.h5"
+mc_top = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=1)
 
-# STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
-# STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
+STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
+STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
 
-# model.fit_generator(generator=train_generator,
-#                     steps_per_epoch=STEP_SIZE_TRAIN,
-#                     validation_data=valid_generator,
-#                     validation_steps=STEP_SIZE_VALID,
-#                     epochs=5,
-#                     class_weight=class_weights,
-#                     callbacks = [mc_top])
+model.fit_generator(generator=train_generator,
+                    steps_per_epoch=STEP_SIZE_TRAIN,
+                    validation_data=valid_generator,
+                    validation_steps=STEP_SIZE_VALID,
+                    epochs=5,
+                    class_weight=class_weights,
+                    callbacks = [mc_top])
 
-# model.evaluate_generator(generator=valid_generator)
-# model.save(top_layers_checkpoint_path)
+model.evaluate_generator(generator=valid_generator)
+model.save(top_layers_checkpoint_path)
