@@ -52,7 +52,7 @@ final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
 
 traindf = pd.read_csv("../data/colors_dataset.csv")
-traindf = traindf[['_id','color']]
+traindf = traindf[['_id','colors']]
 no_of_classes = len(traindf['color'].unique())
 class_weight = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['color']),
