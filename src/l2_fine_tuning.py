@@ -40,26 +40,26 @@ epochs = 50
 batch_size = 64
 dropout = 0.5
 no_of_classes = 46
-data_dir = "../data/color_data_split/"
+data_dir = "../data/pattern_data_split//"
 # base_model_path = "models/L2/IntuL2-classification_inceptionv3_bottleneck_16_0.61.h5"
-base_model_path = "../models/L2/image-similarity-color_inceptionv3_03_0.54.h5"
+base_model_path = "../models/L2/image-similarity-pattern_inceptionv3_03_0.54.h5"
 output_models_dir = "../models/L2-fine/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "image-similarity-finetuning-color"
+experiment_name = "image-similarity-finetuning-pattern"
 
 img_width, img_height = 299, 299
-final_model_name = experiment_name + '_inception_colors_finetuning_final.h5'
+final_model_name = experiment_name + '_inception_pattern_finetuning_final.h5'
 
 confusion_matrix_directory = 'path/to/data' # format same as train
 original_img_width, original_img_height = 400, 400
 
-traindf = pd.read_csv("../data/colors_dataset.csv")
-traindf = traindf[['_id','colors']]
-no_of_classes = len(traindf['colors'].unique())
+traindf = pd.read_csv("../data/pattern_dataset.csv")
+traindf = traindf[['_id','pattern']]
+no_of_classes = len(traindf['pattern'].unique())
 class_weight = class_weight.compute_class_weight('balanced',
-                                                 np.unique(traindf['colors']),
-                                                 traindf['colors'])
+                                                 np.unique(traindf['pattern']),
+                                                 traindf['pattern'])
 
 
 #call back for confusion matrix

@@ -186,10 +186,10 @@ base_model = InceptionV3(weights='imagenet', include_top=False)
 # add a global spatial average pooling layer
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
-
+x = Dropout(dropout)(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
-x = Dropout(dropout)(x)
+
 predictions = Dense(no_of_classes, activation='softmax')(x)
 
 # this is the model we will train
