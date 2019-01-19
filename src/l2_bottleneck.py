@@ -42,22 +42,22 @@ import pandas as pd
 epochs = 50
 batch_size = 64
 dropout = 0.5
-data_dir = "../data/color_data_split/"
+data_dir = "../data/pattern_data_split/"
 output_models_dir = "../models/L2/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "image-similarity-color"
+experiment_name = "image-similarity-pattern"
 img_width, img_height = 244, 244
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
 
-traindf = pd.read_csv("../data/colors_dataset.csv")
-traindf = traindf[['_id','colors']]
-no_of_classes = len(traindf['colors'].unique())
+traindf = pd.read_csv("../data/pattern_dataset.csv")
+traindf = traindf[['_id','pattern']]
+no_of_classes = len(traindf['pattern'].unique())
 class_weight = class_weight.compute_class_weight('balanced',
-                                                 np.unique(traindf['colors']),
-                                                 traindf['colors'])
+                                                 np.unique(traindf['pattern']),
+                                                 traindf['pattern'])
 
 if validate_images:
     i = 0
@@ -187,7 +187,6 @@ base_model = InceptionV3(weights='imagenet', include_top=False)
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
 
-x = Dropout(dropout)(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
 x = Dropout(dropout)(x)
@@ -205,4 +204,4 @@ model.fit_generator(train_generator, epochs = epochs, validation_data=validation
 model.save(final_model_name)
 checkpoints =[checkpoint]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
-model.save(final_model_name)
+model.save(final_model_name)	
