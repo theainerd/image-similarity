@@ -190,18 +190,23 @@ x = Dropout(dropout)(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
 
-predictions = Dense(no_of_classes, activation='softmax')(x)
+predictions_color = Dense(no_of_classes, activation='softmax')(x)
+predictions_pattern = Dense(no_of_classes,activation = 'softmax')(x)
 
-# this is the model we will train
-model = Model(inputs=base_model.input, outputs=predictions)
-model.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+model_not_train = Model(inputs=base_model.input, outputs=['predictions_color','predictions_pattern'])
+model_not_train.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+print(model_not_train.summary())
 
-filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
-checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, 
-	class_weight=class_weight, callbacks=checkpoints)
-model.save(final_model_name)
-checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
-model.save(final_model_name)	
+# # this is the model we will train
+# model = Model(inputs=base_model.input, outputs=predictions_pattern)
+# model.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+
+# filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
+# checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
+# checkpoints =[checkpoint]
+# model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, 
+# 	class_weight=class_weight, callbacks=checkpoints)
+# model.save(final_model_name)
+# checkpoints =[checkpoint]
+# model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
+# model.save(final_model_name)
