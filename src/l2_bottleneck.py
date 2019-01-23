@@ -182,15 +182,25 @@ validation_generator = test_datagen.flow_from_directory(
 print("Downloading Base Model.....")
 base_model = InceptionV3(weights='imagenet', include_top=False)
 
-# add a global spatial average pooling layer
-x = base_model.output
-x = GlobalAveragePooling2D()(x)
-x = Dropout(dropout)(x)
-# let's add a fully-connected layer
-x = Dense(1024, activation='relu')(x)
 
-predictions_color = Dense(no_of_classes, activation='softmax',name="predictions_color")(x)
-predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictions_pattern")(x)
+# pattern attribute layer
+
+pattern_attribute = base_model.output
+pattern_attribute = GlobalAveragePooling2D()(pattern_attribute)
+pattern_attribute = Dropout(dropout)(pattern_attribute)
+# let's add a fully-connected layer
+pattern_attribute_layer = Dense(1024, activation='relu',name = "pattern_attribute_layer")(pattern_attribute)
+predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
+
+# color attribute layer
+
+pattern_color = base_model.output
+pattern_color = GlobalAveragePooling2D()(pattern_color)
+pattern_color = Dropout(dropout)(pattern_color)
+# let's add a fully-connected layer
+pattern_color = Dense(1024, activation='relu',name = "pattern_attribute_layer")(pattern_color)
+predictions_color = Dense(no_of_classes, activation='softmax',name="predictions_color")(pattern_color)
+
 
 final_output = [predictions_color,predictions_pattern]
 
