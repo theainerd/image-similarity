@@ -5,8 +5,6 @@ from comet_ml import Experiment
 experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
                         project_name="image-similarity", workspace="theainerd")
 
-from keras.layers.merge import Concatenate
-from keras.layers.merge import Lambda
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam
 from keras.optimizers import SGD 
