@@ -198,7 +198,7 @@ pattern_color = base_model.output
 pattern_color = GlobalAveragePooling2D()(pattern_color)
 pattern_color = Dropout(dropout)(pattern_color)
 # let's add a fully-connected layer
-pattern_color = Dense(1024, activation='relu',name = "pattern_attribute_layer")(pattern_color)
+pattern_color = Dense(1024, activation='relu',name = "pattern_attribute_color")(pattern_color)
 predictions_color = Dense(no_of_classes, activation='softmax',name="predictions_color")(pattern_color)
 
 
