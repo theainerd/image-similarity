@@ -5,7 +5,7 @@ from comet_ml import Experiment
 experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
                         project_name="image-similarity", workspace="theainerd")
 
-
+from keras.layers.merge import Concatenate
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam
 from keras.optimizers import SGD 
@@ -190,15 +190,16 @@ x = Dropout(dropout)(x)
 # let's add a fully-connected layer
 x = Dense(1024, activation='relu')(x)
 
-predictions_color = Dense(no_of_classes, activation='softmax')(x)
-predictions_pattern = Dense(no_of_classes,activation = 'softmax')(x)
+predictions_color = Dense(no_of_classes, activation='softmax',name="predictions_color")(x)
+predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictions_pattern")(x)
+final_output = Concatenate([predictions_color,predictions_pattern])
 
-model_not_train = Model(inputs=base_model.input, outputs=['predictions_color','predictions_pattern'])
+model_not_train = Model(inputs=base_model.input, outputs=final_output)
 model_not_train.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 print(model_not_train.summary())
 
 # # this is the model we will train
-# model = Model(inputs=base_model.input, outputs=predictions_pattern)
+# model = Model(inputs=base_model.input, outputs=x)
 # model.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 # filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
