@@ -230,6 +230,3 @@ checkpoints =[checkpoint]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, 
 	class_weight=class_weight, callbacks=checkpoints)
 model.save(final_model_name)
-checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
-model.save(final_model_name)
