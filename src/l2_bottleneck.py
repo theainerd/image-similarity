@@ -214,7 +214,7 @@ for layer in model.layers[:]:
 
 # layers_to_train = [312,314,316]
 
-for i in layers_to_train[310:]:
+for i in model.layers[310:]:
 	print(model.layers[i].name)
 	# model.layers[i].trainable = True
 
