@@ -60,7 +60,7 @@ class_weight = class_weight.compute_class_weight('balanced',
                                                  traindf['pattern'])
 
 traindf_color = pd.read_csv("../data/colors_dataset.csv")
-traindf_color = traindf[['_id','color']]
+traindf_color = traindf_color[['_id','color']]
 no_of_classes_color = len(traindf['color'].unique())
 
 if validate_images:
