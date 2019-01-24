@@ -203,7 +203,7 @@ color_attribute = Dense(1024, activation='relu',name = "attribute_color")(color_
 predictions_color = Dense(17, activation='softmax',name="predictions_color")(color_attribute)
 
 
-final_output = [predictions_color,predictions_pattern,predictions_gender]
+final_output = [predictions_color,predictions_pattern]
 
 model = Model(inputs=base_model.input, outputs = final_output)
 
