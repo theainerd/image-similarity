@@ -5,6 +5,7 @@ from comet_ml import Experiment
 experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
                         project_name="image-similarity", workspace="theainerd")
 
+# from keras.utils import plot_model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam
 from keras.optimizers import SGD 
@@ -42,10 +43,10 @@ epochs = 50
 batch_size = 64
 dropout = 0.5
 data_dir = "../data/pattern_data_split/"
-output_models_dir = "../models/L2/"
+output_models_dir = "../models/label_pattern/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "image-similarity-pattern"
+experiment_name = "label_pattern"
 img_width, img_height = 244, 244
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
@@ -152,7 +153,6 @@ class Metrics(Callback):
 metrics1 = Metrics()
 
 
-
 datagen = ImageDataGenerator(
         rotation_range=40,
         width_shift_range=0.2,
@@ -189,8 +189,8 @@ pattern_attribute = base_model.output
 pattern_attribute = GlobalAveragePooling2D()(pattern_attribute)
 pattern_attribute = Dropout(dropout)(pattern_attribute)
 # let's add a fully-connected layer
-pattern_attribute_layer = Dense(1024, activation='relu',name = "pattern_attribute_layer")(pattern_attribute)
-predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
+pattern_attribute_layer = Dense(1024, activation='relu',name = "attribute_pattern")(pattern_attribute)
+predictions_pattern = Dense(18,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
 
 # color attribute layer
 
@@ -198,28 +198,37 @@ pattern_color = base_model.output
 pattern_color = GlobalAveragePooling2D()(pattern_color)
 pattern_color = Dropout(dropout)(pattern_color)
 # let's add a fully-connected layer
-pattern_color = Dense(1024, activation='relu',name = "pattern_attribute_color")(pattern_color)
-predictions_color = Dense(no_of_classes, activation='softmax',name="predictions_color")(pattern_color)
+pattern_color = Dense(1024, activation='relu',name = "attribute_color")(pattern_color)
+predictions_color = Dense(46, activation='softmax',name="predictions_color")(pattern_color)
 
 
 final_output = [predictions_color,predictions_pattern]
 
-model_not_train = Model(inputs=base_model.input, outputs=final_output)
-# model_not_train.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+model = Model(inputs=base_model.input, outputs = final_output)
 
-print(model_not_train.summary())
+# change this code for every attribute - set the layers to true for training
+
+for layer in model.layers[:]:
+    layer.trainable = False
+
+layers_to_train = [312,314,316,318]
+
+for i in layers_to_train:
+	print(model.layers[i].name)
+	model.layers[i].trainable = True
 
 
-# # this is the model we will train
-# model = Model(inputs=base_model.input, outputs=x)
-# model.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+# plot_model(model_not_train, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
-# filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
-# checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-# checkpoints =[checkpoint]
-# model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, 
-# 	class_weight=class_weight, callbacks=checkpoints)
-# model.save(final_model_name)
-# checkpoints =[checkpoint]
-# model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
-# model.save(final_model_name)
+# this is the model we will train
+model.compile(optimizer = SGD(lr=1e-4, momentum=0.9), loss='categorical_crossentropy', metrics=['accuracy'])
+
+filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
+checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
+checkpoints =[checkpoint]
+model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, 
+	class_weight=class_weight, callbacks=checkpoints)
+model.save(final_model_name)
+checkpoints =[checkpoint]
+model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
+model.save(final_model_name)
