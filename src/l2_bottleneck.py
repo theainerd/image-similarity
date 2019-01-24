@@ -193,33 +193,12 @@ pattern_attribute = Dropout(dropout)(pattern_attribute)
 pattern_attribute_layer = Dense(1024, activation='relu',name = "attribute_pattern")(pattern_attribute)
 predictions_pattern = Dense(no_of_classes_pattern,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
 
-# color attribute layer
-
-color_attribute = base_model.output
-color_attribute = GlobalAveragePooling2D()(color_attribute)
-color_attribute = Dropout(dropout)(color_attribute)
-# let's add a fully-connected layer
-color_attribute = Dense(1024, activation='relu',name = "attribute_color")(color_attribute)
-predictions_color = Dense(17, activation='softmax',name="predictions_color")(color_attribute)
-
-
-final_output = [predictions_color,predictions_pattern]
-
 model = Model(inputs=base_model.input, outputs = predictions_pattern)
 
 # change this code for every attribute - set the layers to true for training
-
-for layer in model.layers[:]:
+for layer in base_model.layers:
     layer.trainable = False
-
-layers_to_train = [310,311,312,313,314,315]
-
-for i in layers_to_train:
-	print(model.layers[i].name)
-	# model.layers[i].trainable = True
-
-# plot_model(model_not_train, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
-
+    
 # this is the model we will train
 
 model.compile(optimizer = SGD(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
