@@ -54,10 +54,14 @@ validate_images = True
 
 traindf = pd.read_csv("../data/pattern_dataset.csv")
 traindf = traindf[['_id','pattern']]
-no_of_classes = len(traindf['pattern'].unique())
+no_of_classes_pattern = len(traindf['pattern'].unique())
 class_weight = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['pattern']),
                                                  traindf['pattern'])
+
+traindf_color = pd.read_csv("../data/colors_dataset.csv")
+traindf_color = traindf[['_id','color']]
+no_of_classes_color = len(traindf['color'].unique())
 
 if validate_images:
     i = 0
@@ -190,7 +194,7 @@ pattern_attribute = GlobalAveragePooling2D()(pattern_attribute)
 pattern_attribute = Dropout(dropout)(pattern_attribute)
 # let's add a fully-connected layer
 pattern_attribute_layer = Dense(1024, activation='relu',name = "attribute_pattern")(pattern_attribute)
-predictions_pattern = Dense(18,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
+predictions_pattern = Dense(no_of_classes_pattern,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
 
 # color attribute layer
 
