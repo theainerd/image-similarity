@@ -221,6 +221,7 @@ for i in layers_to_train:
 # plot_model(model_not_train, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
 # this is the model we will train
+
 model.compile(optimizer = SGD(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
