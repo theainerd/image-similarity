@@ -42,7 +42,7 @@ import pandas as pd
 epochs = 50
 batch_size = 64
 dropout = 0.5
-data_dir = "../data/pattern_data_split/"
+data_dir = "../data/pattern_data_split_mini/"
 output_models_dir = "../models/label_pattern/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
@@ -52,16 +52,13 @@ original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
 
-traindf = pd.read_csv("../data/pattern_dataset.csv")
+traindf = pd.read_csv("../data/pattern_dataset_mini.csv")
 traindf = traindf[['_id','pattern']]
 no_of_classes_pattern = len(traindf['pattern'].unique())
 class_weight = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['pattern']),
                                                  traindf['pattern'])
 
-traindf_color = pd.read_csv("../data/colors_dataset.csv")
-traindf_color = traindf_color[['_id','color']]
-no_of_classes_color = len(traindf['color'].unique())
 
 if validate_images:
     i = 0
@@ -198,15 +195,15 @@ predictions_pattern = Dense(no_of_classes_pattern,activation = 'softmax',name="p
 
 # color attribute layer
 
-pattern_color = base_model.output
-pattern_color = GlobalAveragePooling2D()(pattern_color)
-pattern_color = Dropout(dropout)(pattern_color)
+color_attribute = base_model.output
+color_attribute = GlobalAveragePooling2D()(color_attribute)
+color_attribute = Dropout(dropout)(color_attribute)
 # let's add a fully-connected layer
-pattern_color = Dense(1024, activation='relu',name = "attribute_color")(pattern_color)
-predictions_color = Dense(no_of_classes_color, activation='softmax',name="predictions_color")(pattern_color)
+color_attribute = Dense(1024, activation='relu',name = "attribute_color")(color_attribute)
+predictions_color = Dense(17, activation='softmax',name="predictions_color")(color_attribute)
 
 
-final_output = [predictions_color,predictions_pattern]
+final_output = [predictions_color,predictions_pattern,predictions_gender]
 
 model = Model(inputs=base_model.input, outputs = final_output)
 
