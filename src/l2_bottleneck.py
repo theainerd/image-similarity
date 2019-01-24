@@ -205,7 +205,7 @@ predictions_color = Dense(17, activation='softmax',name="predictions_color")(col
 
 final_output = [predictions_color,predictions_pattern]
 
-model = Model(inputs=base_model.input, outputs = final_output)
+model = Model(inputs=base_model.input, outputs = predictions_pattern)
 
 # change this code for every attribute - set the layers to true for training
 
