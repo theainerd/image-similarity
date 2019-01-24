@@ -217,11 +217,10 @@ for i in layers_to_train:
 	print(model.layers[i].name)
 	model.layers[i].trainable = True
 
-
 # plot_model(model_not_train, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
 # this is the model we will train
-model.compile(optimizer = SGD(lr=1e-4, momentum=0.9), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = SGD(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
