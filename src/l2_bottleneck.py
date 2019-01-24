@@ -214,9 +214,9 @@ for layer in model.layers[:]:
 
 layers_to_train = [312,314,316]
 
-for i in layers_to_train:
+for i in layers_to_train[310:]:
 	print(model.layers[i].name)
-	model.layers[i].trainable = True
+	# model.layers[i].trainable = True
 
 # plot_model(model_not_train, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
