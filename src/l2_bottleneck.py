@@ -212,7 +212,7 @@ model = Model(inputs=base_model.input, outputs = predictions_pattern)
 for layer in model.layers[:]:
     layer.trainable = False
 
-layers_to_train = [312,314,316]
+# layers_to_train = [312,314,316]
 
 for i in layers_to_train[310:]:
 	print(model.layers[i].name)
