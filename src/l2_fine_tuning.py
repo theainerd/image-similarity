@@ -39,7 +39,7 @@ import pandas as pd
 epochs = 50
 batch_size = 64
 dropout = 0.5
-no_of_classes = 46
+# no_of_classes = 46
 data_dir = "../data/colors_data_split_mini"
 # base_model_path = "models/L2/IntuL2-classification_inceptionv3_bottleneck_16_0.61.h5"
 # base_model_path = "../models/L2/label_pattern_inceptionv3_10_0.15.h5"
@@ -97,7 +97,7 @@ base_model = InceptionV3(weights='imagenet', include_top=False)
 # pattern_attribute = model.get_layer('dropout_1')(pattern_attribute)
 # pattern_attribute = model.get_layer('attribute_pattern')(pattern_attribute)
 # predictions_pattern = model.get_layer('predictions_pattern')(pattern_attribute)
-
+color_attribute = base_model.output
 color_attribute = GlobalAveragePooling2D(name='global_average_pooling2d_2')(color_attribute)
 color_attribute = Dropout(dropout,name='dropout_2')(color_attribute)
 color_attribute = Dense(1024, activation='relu',name = "attribute_color")(color_attribute)
