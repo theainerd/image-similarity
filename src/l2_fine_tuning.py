@@ -40,13 +40,13 @@ epochs = 50
 batch_size = 64
 dropout = 0.5
 no_of_classes = 46
-data_dir = "../data/pattern_data_split//"
+data_dir = "../data/colors_data_split_mini"
 # base_model_path = "models/L2/IntuL2-classification_inceptionv3_bottleneck_16_0.61.h5"
-base_model_path = "../models/L2/image-similarity-pattern_inceptionv3_03_0.54.h5"
-output_models_dir = "../models/L2-fine/"
+# base_model_path = "../models/L2/label_pattern_inceptionv3_10_0.15.h5"
+output_models_dir = "../models/label_color/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "image-similarity-finetuning-pattern"
+experiment_name = "multiclass"
 
 img_width, img_height = 299, 299
 final_model_name = experiment_name + '_inception_pattern_finetuning_final.h5'
@@ -54,12 +54,12 @@ final_model_name = experiment_name + '_inception_pattern_finetuning_final.h5'
 confusion_matrix_directory = 'path/to/data' # format same as train
 original_img_width, original_img_height = 400, 400
 
-traindf = pd.read_csv("../data/pattern_dataset.csv")
-traindf = traindf[['_id','pattern']]
-no_of_classes = len(traindf['pattern'].unique())
-class_weight = class_weight.compute_class_weight('balanced',
-                                                 np.unique(traindf['pattern']),
-                                                 traindf['pattern'])
+traindf = pd.read_csv("../data/colors_dataset_mini.csv")
+traindf = traindf[['_id','colors']]
+no_of_classes = len(traindf['colors'].unique())
+# class_weight = class_weight.compute_class_weight('balanced',
+#                                                  np.unique(traindf['pattern']),
+#                                                  traindf['pattern'])
 
 
 datagen = ImageDataGenerator(
@@ -88,18 +88,44 @@ validation_generator = test_datagen.flow_from_directory(
 	class_mode="categorical",
 	shuffle=True)
 
-model = load_model(base_model_path)
+print("Downloading Base Model.....")
 
-for layer in model.layers[:172]:
-  layer.trainable = False
-for layer in model.layers[172:]:
-  layer.trainable = True
+base_model = InceptionV3(weights='imagenet', include_top=False)
+                          
+# pattern_attribute = output
+# pattern_attribute = model.get_layer('global_average_pooling2d_1')(pattern_attribute)
+# pattern_attribute = model.get_layer('dropout_1')(pattern_attribute)
+# pattern_attribute = model.get_layer('attribute_pattern')(pattern_attribute)
+# predictions_pattern = model.get_layer('predictions_pattern')(pattern_attribute)
 
-clr_triangular = CyclicLR(mode='triangular')
+color_attribute = GlobalAveragePooling2D(name='global_average_pooling2d_2')(color_attribute)
+color_attribute = Dropout(dropout,name='dropout_2')(color_attribute)
+color_attribute = Dense(1024, activation='relu',name = "attribute_color")(color_attribute)
+predictions_color = Dense(17, activation='softmax',name="predictions_color")(color_attribute)
+
+model = Model(inputs=base_model.input, outputs = predictions_color)
+
+# change this code for every attribute - set the layers to true for training
+for layer in base_model.layers:
+    layer.trainable = False
+
+# model1 = Model(inputs = model.input, outputs = predictions_color)
+
+# for layer in model1.layers:
+#   layer.trainable = False
+
+# for layer in model1.layers[305:]:
+#   print(layer.name)
+#   layer.trainable = False
+
+
+# from keras.utils import plot_model
+# plot_model(model1, to_file='model1.png')
+
 model.compile(optimizer=optimizers.SGD(lr=1e-4, momentum=0.9), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
-filepath= output_models_dir + experiment_name + "_inceptionv3_finetuning_{epoch:02d}_{val_acc:.2f}.h5"
+filepath= output_models_dir + experiment_name + "multiclass_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint,clr_triangular]
-model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, class_weight=class_weight, callbacks=checkpoints)
+checkpoints =[checkpoint]
+model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, callbacks=checkpoints)
 model.save(final_model_name)

@@ -181,8 +181,8 @@ validation_generator = test_datagen.flow_from_directory(
 	shuffle=True)
 
 print("Downloading Base Model.....")
-base_model = InceptionV3(weights='imagenet', include_top=False)
 
+base_model = InceptionV3(weights='imagenet', include_top=False)
 
 # pattern attribute layer
 
@@ -198,7 +198,7 @@ model = Model(inputs=base_model.input, outputs = predictions_pattern)
 # change this code for every attribute - set the layers to true for training
 for layer in base_model.layers:
     layer.trainable = False
-    
+
 # this is the model we will train
 
 model.compile(optimizer = SGD(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
