@@ -90,10 +90,9 @@ validation_generator = test_datagen.flow_from_directory(
 
 print("Downloading Base Model.....")
 
-base_model = model.load_weights("../models/label_color/multiclassmulticlass_25_0.18.h5")
-print ("Checkpoint loaded.")
 
-# base_model = InceptionV3(weights='imagenet', include_top=False)
+base_model = InceptionV3(weights='imagenet', include_top=False)
+
                           
 # pattern_attribute = output
 # pattern_attribute = model.get_layer('global_average_pooling2d_1')(pattern_attribute)
@@ -108,6 +107,9 @@ color_attribute = Dense(1024, activation='relu',name = "attribute_color")(color_
 predictions_color = Dense(no_of_classes, activation='softmax',name="predictions_color")(color_attribute)
 
 model = Model(inputs=base_model.input, outputs = predictions_color)
+
+model.load_weights("../models/label_color/multiclassmulticlass_25_0.18.h5")
+print ("Checkpoint loaded.")
 
 # change this code for every attribute - set the layers to true for training
 for layer in base_model.layers:
