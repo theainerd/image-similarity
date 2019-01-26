@@ -55,7 +55,7 @@ confusion_matrix_directory = 'path/to/data' # format same as train
 original_img_width, original_img_height = 400, 400
 
 traindf = pd.read_csv("../data/color_balanced.csv")
-traindf = traindf[['_id','colors']]
+traindf = traindf[['_id','color']]
 no_of_classes = len(traindf['color'].unique())
 class_weight = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['color']),
