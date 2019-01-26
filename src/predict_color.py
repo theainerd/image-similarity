@@ -40,7 +40,7 @@ epochs = 50
 batch_size = 64
 dropout = 0.5
 # no_of_classes = 46
-data_dir = "../data/colors_data_split_mini/"
+data_dir = "../data/color_balanced/"
 # base_model_path = "models/L2/IntuL2-classification_inceptionv3_bottleneck_16_0.61.h5"
 # base_model_path = "../models/L2/label_pattern_inceptionv3_10_0.15.h5"
 output_models_dir = "../models/label_color/"
@@ -54,12 +54,12 @@ final_model_name = experiment_name + '_inception_pattern_finetuning_final.h5'
 confusion_matrix_directory = 'path/to/data' # format same as train
 original_img_width, original_img_height = 400, 400
 
-traindf = pd.read_csv("../data/colors_dataset_mini.csv")
+traindf = pd.read_csv("../data/color_balanced.csv")
 traindf = traindf[['_id','colors']]
 no_of_classes = len(traindf['colors'].unique())
-# class_weight = class_weight.compute_class_weight('balanced',
-#                                                  np.unique(traindf['pattern']),
-#                                                  traindf['pattern'])
+class_weight = class_weight.compute_class_weight('balanced',
+                                                 np.unique(traindf['color']),
+                                                 traindf['color'])
 
 
 datagen = ImageDataGenerator(
@@ -128,5 +128,5 @@ model.compile(optimizer=optimizers.SGD(lr=1e-4, momentum=0.9), loss = 'categoric
 filepath= output_models_dir + experiment_name + "multiclass_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator, callbacks=checkpoints)
+model.fit_generator(train_generator, epochs = epochs,class_weight = class_weight, validation_data=validation_generator, callbacks=checkpoints)
 model.save(final_model_name)
