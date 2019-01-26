@@ -97,6 +97,7 @@ base_model = InceptionV3(weights='imagenet', include_top=False)
 # pattern_attribute = model.get_layer('dropout_1')(pattern_attribute)
 # pattern_attribute = model.get_layer('attribute_pattern')(pattern_attribute)
 # predictions_pattern = model.get_layer('predictions_pattern')(pattern_attribute)
+
 color_attribute = base_model.output
 color_attribute = GlobalAveragePooling2D(name='global_average_pooling2d_2')(color_attribute)
 color_attribute = Dropout(dropout,name='dropout_2')(color_attribute)
