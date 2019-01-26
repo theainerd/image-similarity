@@ -90,7 +90,10 @@ validation_generator = test_datagen.flow_from_directory(
 
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(weights='imagenet', include_top=False)
+base_model = model.load_weights("../models/label_color/multiclassmulticlass_25_0.18.h5")
+print ("Checkpoint loaded.")
+
+# base_model = InceptionV3(weights='imagenet', include_top=False)
                           
 # pattern_attribute = output
 # pattern_attribute = model.get_layer('global_average_pooling2d_1')(pattern_attribute)
@@ -123,7 +126,7 @@ for layer in base_model.layers:
 # from keras.utils import plot_model
 # plot_model(model1, to_file='model1.png')
 
-model.compile(optimizer=optimizers.SGD(lr=1e-4, momentum=0.9), loss = 'categorical_crossentropy', metrics = ['accuracy'])
+model.compile(optimizer=optimizers.SGD(lr=0.01, momentum=0.9), loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
 filepath= output_models_dir + experiment_name + "multiclass_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
