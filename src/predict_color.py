@@ -28,8 +28,8 @@ from keras.callbacks import Callback
 from keras.preprocessing.image import img_to_array
 from keras.applications import imagenet_utils
 
-from keras.callbacks import *
-from clr_callback import *
+# from keras.callbacks import *
+# from clr_callback import *
 
 from sklearn.utils import class_weight
 import pandas as pd
