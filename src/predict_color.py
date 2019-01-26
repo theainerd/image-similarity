@@ -102,7 +102,7 @@ color_attribute = base_model.output
 color_attribute = GlobalAveragePooling2D(name='global_average_pooling2d_2')(color_attribute)
 color_attribute = Dropout(dropout,name='dropout_2')(color_attribute)
 color_attribute = Dense(1024, activation='relu',name = "attribute_color")(color_attribute)
-predictions_color = Dense(17, activation='softmax',name="predictions_color")(color_attribute)
+predictions_color = Dense(no_of_classes, activation='softmax',name="predictions_color")(color_attribute)
 
 model = Model(inputs=base_model.input, outputs = predictions_color)
 
