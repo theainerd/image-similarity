@@ -87,7 +87,7 @@ validation_generator = test_datagen.flow_from_directory(
 	shuffle=True)
 
 
-model = model.load_model("../models/label_pattern/label_pattern_inceptionv3_05_0.38.h5")
+model = load_model("../models/label_pattern/label_pattern_inceptionv3_05_0.38.h5")
 print ("Model loaded.")
 
 for i, layer in enumerate(model.layers):
