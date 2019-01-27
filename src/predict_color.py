@@ -5,8 +5,9 @@ from comet_ml import Experiment
 experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
                         project_name="image-similarity", workspace="theainerd")
 
+from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
-from keras import optimizers
+from keras.optimizers import Adam
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
@@ -108,9 +109,6 @@ predictions_color = Dense(no_of_classes, activation='softmax',name="predictions_
 
 model = Model(inputs=base_model.input, outputs = predictions_color)
 
-model.load_weights("../models/label_color/multiclassmulticlass_25_0.18.h5")
-print ("Checkpoint loaded.")
-
 # change this code for every attribute - set the layers to true for training
 for layer in base_model.layers:
     layer.trainable = False
@@ -124,11 +122,10 @@ for layer in base_model.layers:
 #   print(layer.name)
 #   layer.trainable = False
 
-
 # from keras.utils import plot_model
 # plot_model(model1, to_file='model1.png')
 
-model.compile(optimizer=optimizers.SGD(lr=0.01, momentum=0.9), loss = 'categorical_crossentropy', metrics = ['accuracy'])
+model.compile(optimizer=Adam(0.001), loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
 filepath= output_models_dir + experiment_name + "multiclass_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
