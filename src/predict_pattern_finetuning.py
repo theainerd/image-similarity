@@ -90,19 +90,25 @@ validation_generator = test_datagen.flow_from_directory(
 model = load_model("../models/label_pattern/label_pattern_inceptionv3_05_0.38.h5")
 print ("Model loaded.")
 
-for i, layer in enumerate(model.layers):
-   print(i, layer.name)
+# for i, layer in enumerate(model.layers):
+#    print(i, layer.name)
 
-# # change this code for every attribute - set the layers to true for training
-# for layer in base_model.layers:
-#     layer.trainable = False
+
+# we chose to train the top 2 inception blocks, i.e. we will freeze
+# the first 172 layers and unfreeze the rest:
+for layer in model.layers[:172]:
+   layer.trainable = False
+for layer in model.layers[172:]:
+   layer.trainable = True
+
 
 # # this is the model we will train
 
-# model.compile(optimizer = SGD(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+from keras.optimizers import SGD
+model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy', metrics=['accuracy'])
 
-# filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
-# checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-# checkpoints =[checkpoint]
-# model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
-# model.save(final_model_name)
+filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
+checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
+checkpoints =[checkpoint]
+model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
+model.save(final_model_name)
