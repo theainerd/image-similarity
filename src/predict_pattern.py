@@ -13,6 +13,7 @@ from keras.optimizers import SGD
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
+from keras.applications.vgg16 import VGG16
 from keras.regularizers import l2
 from keras.applications.resnet50 import preprocess_input
 from keras.applications.resnet50 import ResNet50
@@ -88,7 +89,7 @@ validation_generator = test_datagen.flow_from_directory(
 
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(weights='imagenet', include_top=False)
+base_model = VGG16(weights='imagenet', include_top=False)
 
 # pattern attribute layer
 
@@ -102,8 +103,8 @@ predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictio
 model = Model(inputs=base_model.input, outputs = predictions_pattern)
 
 
-model.load_weights("../models/label_pattern/label_pattern_inceptionv3_41_0.37.h5")
-print ("Checkpoint loaded.")
+# model.load_weights("../models/label_pattern/label_pattern_inceptionv3_41_0.37.h5")
+# print ("Checkpoint loaded.")
 
 # change this code for every attribute - set the layers to true for training
 for layer in base_model.layers:
