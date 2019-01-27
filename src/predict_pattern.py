@@ -6,6 +6,7 @@ experiment = Experiment(api_key="oWiH86Pi5sqYSaVZmV1BYxBls",
                         project_name="image-similarity", workspace="theainerd")
 
 # from keras.utils import plot_model
+from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam
 from keras.optimizers import SGD 
@@ -100,13 +101,17 @@ predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictio
 
 model = Model(inputs=base_model.input, outputs = predictions_pattern)
 
+
+model.load_weights("../models/label_pattern/label_pattern_inceptionv3_41_0.37.h5")
+print ("Checkpoint loaded.")
+
 # change this code for every attribute - set the layers to true for training
 for layer in base_model.layers:
     layer.trainable = False
 
 # this is the model we will train
 
-model.compile(optimizer = SGD(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = SGD(lr=0.01), loss='categorical_crossentropy', metrics=['accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
