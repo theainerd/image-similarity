@@ -189,8 +189,8 @@ base_model = InceptionV3(weights='imagenet', include_top=False)
 pattern_attribute = base_model.output
 pattern_attribute = GlobalAveragePooling2D(name = 'global_average_pooling2d_1')(pattern_attribute)
 # let's add a fully-connected layer
-pattern_attribute_layer = Dense(1024, activation='relu',name = "attribute_pattern")(pattern_attribute)
 pattern_attribute = Dropout(dropout)(pattern_attribute)
+pattern_attribute_layer = Dense(1024, activation='relu',name = "attribute_pattern")(pattern_attribute)
 predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
 
 model = Model(inputs=base_model.input, outputs = predictions_pattern)

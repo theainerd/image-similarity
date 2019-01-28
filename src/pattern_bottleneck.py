@@ -56,10 +56,20 @@ validate_images = True
 
 traindf = pd.read_csv("../data/pattern_balanced.csv")
 traindf = traindf[['_id','pattern']]
+traindf = traindf[traindf.pattern != "geometric"]
+traindf = traindf[traindf.pattern != "fotoprint"]
+traindf = traindf[traindf.pattern != "paisley"]
+traindf = traindf[traindf.pattern != "stud"]
+traindf = traindf[traindf.pattern != "rivets"]
+traindf = traindf[traindf.pattern != "pinstripe"]
+traindf = traindf[traindf.pattern != "flounce"]
+traindf = traindf[traindf.pattern != "gemstones"]
+
 no_of_classes = len(traindf['pattern'].unique())
 class_weight = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['pattern']),
                                                  traindf['pattern'])
+
 
 if validate_images:
     i = 0
@@ -195,6 +205,7 @@ model = Model(input=base_model.input, output=predictions)
 
 for layer in base_model.layers:
     layer.trainable = False
+
 model.compile(optimizer='rmsprop', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
