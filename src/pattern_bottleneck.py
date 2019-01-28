@@ -65,7 +65,10 @@ traindf = traindf[traindf.pattern != "pinstripe"]
 traindf = traindf[traindf.pattern != "flounce"]
 traindf = traindf[traindf.pattern != "gemstones"]
 
+
+
 no_of_classes = len(traindf['pattern'].unique())
+print(no_of_classes)
 class_weight = class_weight.compute_class_weight('balanced',
                                                  np.unique(traindf['pattern']),
                                                  traindf['pattern'])
