@@ -95,9 +95,9 @@ base_model = VGG16(weights='imagenet', include_top=False)
 
 pattern_attribute = base_model.output
 pattern_attribute = GlobalAveragePooling2D(name = 'global_average_pooling2d_1')(pattern_attribute)
-pattern_attribute = Dropout(dropout)(pattern_attribute)
 # let's add a fully-connected layer
 pattern_attribute_layer = Dense(1024, activation='relu',name = "attribute_pattern")(pattern_attribute)
+pattern_attribute = Dropout(dropout)(pattern_attribute)
 predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
 
 model = Model(inputs=base_model.input, outputs = predictions_pattern)
@@ -107,12 +107,12 @@ model = Model(inputs=base_model.input, outputs = predictions_pattern)
 # print ("Checkpoint loaded.")
 
 # change this code for every attribute - set the layers to true for training
-for layer in base_model.layers:
-    layer.trainable = False
+# for layer in base_model.layers:
+#     layer.trainable = False
 
 # this is the model we will train
 
-model.compile(optimizer = SGD(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
