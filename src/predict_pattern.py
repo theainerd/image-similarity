@@ -199,7 +199,7 @@ class_weight = class_weight.compute_class_weight(
                 np.unique(train_generator.classes), 
                 train_generator.classes)
 
-print(class_weights)
+print(class_weight)
 
 print("Downloading Base Model.....")
 
