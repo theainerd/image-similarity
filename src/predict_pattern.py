@@ -50,7 +50,7 @@ output_models_dir = "../models/label_pattern_final/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_pattern"
-img_width, img_height = 244, 244
+img_width, img_height = 299, 299
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
@@ -202,13 +202,12 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-K.set_learning_phase(0)
 base_model = inception_v3.InceptionV3(weights='imagenet', include_top=False,classes=no_of_classes, attention_module=attention_module)
-for layer in base_model.layers:
-    layer.trainable = False
 
-K.set_learning_phase(1)
-
+for layer in model.layers[:172]:
+   layer.trainable = False
+for layer in model.layers[172:]:
+   layer.trainable = True
 
 # # change this code for every attribute - set the layers to true for training
 # for layer in base_model.layers:
