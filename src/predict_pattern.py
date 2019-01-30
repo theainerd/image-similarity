@@ -220,8 +220,8 @@ model = Model(inputs=base_model.input, outputs = predictions_pattern)
 # print ("Checkpoint loaded.")
 
 # change this code for every attribute - set the layers to true for training
-# for layer in base_model.layers:
-#     layer.trainable = False
+for layer in base_model.layers:
+    layer.trainable = False
 
 # this is the model we will train
 
@@ -230,7 +230,7 @@ model.compile(optimizer = Adam(lr=lr_schedule(0)), loss='categorical_crossentrop
 lr_scheduler = LearningRateScheduler(lr_schedule)
 lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                cooldown=0,
-                               patience=5,
+                               patience=3,
                                min_lr=0.5e-6)
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
