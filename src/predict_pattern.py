@@ -207,38 +207,42 @@ K.set_learning_phase(0)
 base_model = inception_v3.InceptionV3(weights='imagenet', include_top=False,classes=no_of_classes, attention_module=attention_module)
 
 
-# pattern attribute layer
-
-pattern_attribute = base_model.output
-pattern_attribute = GlobalAveragePooling2D()(pattern_attribute)
-# let's add a fully-connected layer
-pattern_attribute = Dropout(dropout)(pattern_attribute)
-pattern_attribute_layer = Dense(1024, activation='relu',name = "attribute_pattern")(pattern_attribute)
-predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
-
-model = Model(inputs=base_model.input, outputs = predictions_pattern)
-
-K.set_learning_phase(1)
-
-# model.load_weights("../models/label_pattern/label_pattern_inceptionv3_41_0.37.h5")
-# print ("Checkpoint loaded.")
-
 # change this code for every attribute - set the layers to true for training
 for layer in base_model.layers:
     layer.trainable = False
 
-# this is the model we will train
+print(model.summary)
+K.set_learning_phase(1)
 
-model.compile(optimizer = SGD(lr = lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
 
-lr_scheduler = LearningRateScheduler(lr_schedule)
-lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
-                               cooldown=0,
-                               patience=3,
-                               min_lr=0.5e-6)
+# # pattern attribute layer
 
-filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
-checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint, lr_reducer,lr_scheduler]
-model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
-model.save(final_model_name)
+# pattern_attribute = base_model.output
+# pattern_attribute = GlobalAveragePooling2D()(pattern_attribute)
+# # let's add a fully-connected layer
+# pattern_attribute = Dropout(dropout)(pattern_attribute)
+# pattern_attribute_layer = Dense(1024, activation='relu',name = "attribute_pattern")(pattern_attribute)
+# predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
+
+# model = Model(inputs=base_model.input, outputs = predictions_pattern)
+
+
+# # model.load_weights("../models/label_pattern/label_pattern_inceptionv3_41_0.37.h5")
+# # print ("Checkpoint loaded.")
+
+
+# # this is the model we will train
+
+# model.compile(optimizer = SGD(lr = lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
+
+# lr_scheduler = LearningRateScheduler(lr_schedule)
+# lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
+#                                cooldown=0,
+#                                patience=3,
+#                                min_lr=0.5e-6)
+
+# filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
+# checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
+# checkpoints =[checkpoint, lr_reducer,lr_scheduler]
+# model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
+# model.save(final_model_name)
