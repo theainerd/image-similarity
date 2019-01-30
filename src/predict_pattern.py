@@ -46,7 +46,7 @@ epochs = 50
 batch_size = 64
 dropout = 0.5
 data_dir = "../data/pattern_balanced_split/"
-output_models_dir = "../models/label_pattern/"
+output_models_dir = "../models/label_pattern_final/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_pattern"
@@ -55,7 +55,7 @@ original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
 # Choose what attention_module to use: cbam_block / se_block / None
-attention_module = 'cbam_block'
+attention_module = 'se_block'
 
 traindf = pd.read_csv("../data/pattern_balanced.csv")
 traindf = traindf[['_id','pattern']]
@@ -202,7 +202,10 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
+K.set_learning_phase(0)
+
 base_model = inception_v3.InceptionV3(weights='imagenet', include_top=False,classes=no_of_classes, attention_module=attention_module)
+
 
 # pattern attribute layer
 
@@ -215,6 +218,7 @@ predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictio
 
 model = Model(inputs=base_model.input, outputs = predictions_pattern)
 
+K.set_learning_phase(1)
 
 # model.load_weights("../models/label_pattern/label_pattern_inceptionv3_41_0.37.h5")
 # print ("Checkpoint loaded.")
@@ -225,7 +229,7 @@ for layer in base_model.layers:
 
 # this is the model we will train
 
-model.compile(optimizer = Adam(lr=lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = SGD(lr_scheduler(0)), loss='categorical_crossentropy', metrics=['accuracy'])
 
 lr_scheduler = LearningRateScheduler(lr_schedule)
 lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
@@ -235,6 +239,6 @@ lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint, lr_reducer, lr_scheduler]
+checkpoints =[checkpoint, lr_reducer,lr_scheduler]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
