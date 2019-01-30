@@ -12,6 +12,7 @@ from keras.optimizers import Adam
 from keras.optimizers import SGD 
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
+from keras.applications.inception_v3 import InceptionV3 
 import inception_v3
 from keras.callbacks import ReduceLROnPlateau,LearningRateScheduler
 from utils import lr_schedule
@@ -193,7 +194,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = inception_v3.InceptionV3(weights = 'imagenet',include_top=False,classes=no_of_classes, attention_module=attention_module)
+base_model = InceptionV3(weights = 'imagenet',include_top=False,classes=no_of_classes)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
@@ -230,7 +231,7 @@ model.compile(optimizer = Adam(lr = lr_schedule(0)), loss='categorical_crossentr
 lr_scheduler = LearningRateScheduler(lr_schedule)
 lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                cooldown=0,
-                               patience=3,
+                               patience=2,
                                min_lr=0.5e-6)
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
