@@ -211,7 +211,9 @@ base_model = inception_v3.InceptionV3(weights='imagenet', include_top=False,clas
 for layer in base_model.layers:
     layer.trainable = False
 
-print(model.summary)
+for i, layer in enumerate(base_model.layers):
+   print(i, layer.name)
+
 K.set_learning_phase(1)
 
 
