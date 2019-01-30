@@ -69,13 +69,6 @@ traindf = traindf[traindf.pattern != "gemstones"]
 no_of_classes = len(traindf['pattern'].unique())
 
 
-class_weight = class_weight.compute_class_weight(
-               'balanced',
-                np.unique(train_generator.classes), 
-                train_generator.classes)
-
-print(class_weight)
-
 datagen = ImageDataGenerator(
         rotation_range=40,
         width_shift_range=0.2,
@@ -102,6 +95,12 @@ validation_generator = test_datagen.flow_from_directory(
 	class_mode="categorical",
 	shuffle=True)
 
+class_weight = class_weight.compute_class_weight(
+               'balanced',
+                np.unique(train_generator.classes), 
+                train_generator.classes)
+
+print(class_weight)
 
 model = load_model("../models/label_pattern_final/label_pattern_inceptionv3_02_0.19.h5")
 print ("Model loaded.")
