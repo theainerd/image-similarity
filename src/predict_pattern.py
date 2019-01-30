@@ -12,8 +12,10 @@ from keras.optimizers import Adam
 from keras.optimizers import SGD 
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
-from keras.applications.inception_v3 import InceptionV3
+from inception_v3 import InceptionV3
 from keras.applications.vgg16 import VGG16
+from keras.callbacks import ReduceLROnPlateau
+from utils import lr_schedule
 from keras.regularizers import l2
 from keras.applications.resnet50 import preprocess_input
 from keras.applications.resnet50 import ResNet50
@@ -53,14 +55,25 @@ img_width, img_height = 244, 244
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
+# Choose what attention_module to use: cbam_block / se_block / None
+attention_module = 'cbam_block'
 
 traindf = pd.read_csv("../data/pattern_balanced.csv")
 traindf = traindf[['_id','pattern']]
-no_of_classes = len(traindf['pattern'].unique())
-class_weight = class_weight.compute_class_weight('balanced',
-                                                 np.unique(traindf['pattern']),
-                                                 traindf['pattern'])
 
+traindf = traindf[traindf.pattern != "geometric"]
+traindf = traindf[traindf.pattern != "fotoprint"]
+traindf = traindf[traindf.pattern != "paisley"]
+traindf = traindf[traindf.pattern != "stud"]
+traindf = traindf[traindf.pattern != "rivets"]
+traindf = traindf[traindf.pattern != "pinstripe"]
+traindf = traindf[traindf.pattern != "flounce"]
+traindf = traindf[traindf.pattern != "gemstones"]
+
+no_of_classes = len(traindf['pattern'].unique())
+# class_weight = class_weight.compute_class_weight('balanced',
+#                                                  np.unique(traindf['pattern']),
+#                                                  traindf['pattern'])
 if validate_images:
     i = 0
     for filename in glob.iglob(data_dir + '**/*.*', recursive=True):
@@ -180,9 +193,17 @@ validation_generator = test_datagen.flow_from_directory(
 	class_mode="categorical",
 	shuffle=True)
 
+
+class_weights = class_weight.compute_class_weight(
+               'balanced',
+                np.unique(train_generator.classes), 
+                train_generator.classes)
+
+print(class_weights)
+
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(weights='imagenet', include_top=False)
+base_model = InceptionV3(weights='imagenet', include_top=False,classes=no_of_classes, attention_module=attention_module)
 
 # pattern attribute layer
 
@@ -205,10 +226,16 @@ model = Model(inputs=base_model.input, outputs = predictions_pattern)
 
 # this is the model we will train
 
-model.compile(optimizer = Adam(0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = Adam(lr=lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
+
+lr_scheduler = LearningRateScheduler(lr_schedule)
+lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
+                               cooldown=0,
+                               patience=5,
+                               min_lr=0.5e-6)
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint]
+checkpoints =[checkpoint, lr_reducer, lr_scheduler]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)

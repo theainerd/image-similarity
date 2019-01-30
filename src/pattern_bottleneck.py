@@ -195,7 +195,15 @@ validation_generator = test_datagen.flow_from_directory(
 
 print("Downloading Base Model.....")
 
+K.set_learning_phase(0)
+
 base_model = InceptionV3(include_top=False, weights='imagenet')
+
+for layer in base_model.layers:
+    layer.trainable = False
+
+K.set_learning_phase(1)
+
 # get layers and add average pooling layer
 ## set model architechture
 x = base_model.output
@@ -204,11 +212,8 @@ x = Dropout(dropout)(x)
 x = Dense(1024, activation='relu')(x)
 x = Dropout(dropout)(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
+
 model = Model(input=base_model.input, output=predictions)
-
-for layer in base_model.layers:
-    layer.trainable = False
-
 model.compile(optimizer='rmsprop', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
