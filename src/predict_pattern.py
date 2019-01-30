@@ -12,7 +12,7 @@ from keras.optimizers import Adam
 from keras.optimizers import SGD 
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
-import inception_v3
+from inception_v3 import *
 from keras.applications.vgg16 import VGG16
 from keras.callbacks import ReduceLROnPlateau
 from utils import lr_schedule
