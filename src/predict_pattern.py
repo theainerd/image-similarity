@@ -12,7 +12,7 @@ from keras.optimizers import Adam
 from keras.optimizers import SGD 
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
-from inception_v3 import *
+import inception_v3 
 from keras.applications.vgg16 import VGG16
 from keras.callbacks import ReduceLROnPlateau
 from utils import lr_schedule
@@ -203,7 +203,7 @@ print(class_weights)
 
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(weights='imagenet', include_top=False,classes=no_of_classes, attention_module=attention_module)
+base_model = inception_v3.InceptionV3(weights='imagenet', include_top=False,classes=no_of_classes, attention_module=attention_module)
 
 # pattern attribute layer
 
