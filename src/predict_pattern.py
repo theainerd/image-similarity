@@ -216,9 +216,6 @@ for layer in base_model.layers:
 # for i, layer in enumerate(base_model.layers):
 #    print(i, layer.name)
 
-
-
-
 # pattern attribute layer
 
 pattern_attribute = base_model.output

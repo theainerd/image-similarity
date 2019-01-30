@@ -36,7 +36,7 @@ from keras.preprocessing.image import img_to_array
 from keras.applications import imagenet_utils
 from sklearn.utils import class_weight
 import pandas as pd
-
+import inception_v3
 
 #configurations
 
@@ -44,7 +44,7 @@ epochs = 50
 batch_size = 64
 dropout = 0.5
 data_dir = "../data/pattern_balanced_split/"
-output_models_dir = "../models/label_pattern_fine/"
+output_models_dir = "../models/label_pattern_final/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_pattern"
@@ -52,13 +52,29 @@ img_width, img_height = 244, 244
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
+attention_module = 'cbam_block'
 
 traindf = pd.read_csv("../data/pattern_balanced.csv")
 traindf = traindf[['_id','pattern']]
+
+traindf = traindf[traindf.pattern != "geometric"]
+traindf = traindf[traindf.pattern != "fotoprint"]
+traindf = traindf[traindf.pattern != "paisley"]
+traindf = traindf[traindf.pattern != "stud"]
+traindf = traindf[traindf.pattern != "rivets"]
+traindf = traindf[traindf.pattern != "pinstripe"]
+traindf = traindf[traindf.pattern != "flounce"]
+traindf = traindf[traindf.pattern != "gemstones"]
+
 no_of_classes = len(traindf['pattern'].unique())
-class_weight = class_weight.compute_class_weight('balanced',
-                                                 np.unique(traindf['pattern']),
-                                                 traindf['pattern'])
+
+
+class_weight = class_weight.compute_class_weight(
+               'balanced',
+                np.unique(train_generator.classes), 
+                train_generator.classes)
+
+print(class_weight)
 
 datagen = ImageDataGenerator(
         rotation_range=40,
@@ -87,7 +103,7 @@ validation_generator = test_datagen.flow_from_directory(
 	shuffle=True)
 
 
-model = load_model("../models/label_pattern/label_pattern_inceptionv3_05_0.38.h5")
+model = load_model("../models/label_pattern_final/label_pattern_inceptionv3_02_0.19.h5")
 print ("Model loaded.")
 
 # for i, layer in enumerate(model.layers):
@@ -100,7 +116,6 @@ for layer in model.layers[:172]:
    layer.trainable = False
 for layer in model.layers[172:]:
    layer.trainable = True
-
 
 # # this is the model we will train
 
