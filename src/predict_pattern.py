@@ -203,8 +203,11 @@ print(class_weight)
 print("Downloading Base Model.....")
 
 K.set_learning_phase(0)
-
 base_model = inception_v3.InceptionV3(weights='imagenet', include_top=False,classes=no_of_classes, attention_module=attention_module)
+for layer in base_model.layers:
+    layer.trainable = False
+
+K.set_learning_phase(1)
 
 
 # # change this code for every attribute - set the layers to true for training
@@ -214,7 +217,7 @@ base_model = inception_v3.InceptionV3(weights='imagenet', include_top=False,clas
 # for i, layer in enumerate(base_model.layers):
 #    print(i, layer.name)
 
-K.set_learning_phase(1)
+
 
 
 # pattern attribute layer
