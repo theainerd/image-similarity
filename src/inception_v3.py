@@ -36,7 +36,7 @@ from keras import backend as K
 from keras_applications.imagenet_utils import decode_predictions
 from keras_applications.imagenet_utils import _obtain_input_shape
 
-from models.attention_module import attach_attention_module
+from attention_module import attach_attention_module
 
 WEIGHTS_PATH = ''
 WEIGHTS_PATH_NO_TOP = ''
