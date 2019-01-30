@@ -39,7 +39,7 @@ from keras_applications.imagenet_utils import _obtain_input_shape
 from attention_module import attach_attention_module
 
 WEIGHTS_PATH = ''
-WEIGHTS_PATH_NO_TOP = ''
+WEIGHTS_PATHTS_PATH_NO_TOP = ''
 
 
 def _conv2d_bn(x,

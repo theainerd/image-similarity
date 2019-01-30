@@ -43,7 +43,7 @@ import pandas as pd
 #configurations
 
 epochs = 50
-batch_size = 32
+batch_size = 64
 dropout = 0.5
 data_dir = "../data/pattern_balanced_split/"
 output_models_dir = "../models/label_pattern_final/"
@@ -202,16 +202,16 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = inception_v3.InceptionV3(include_top=False,classes=no_of_classes, attention_module=attention_module)
+base_model = inception_v3.InceptionV3(weights = 'imagenet',include_top=False,classes=no_of_classes, attention_module=attention_module)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
 # for layer in model.layers[172:]:
 #    layer.trainable = True
 
-# # change this code for every attribute - set the layers to true for training
-# for layer in base_model.layers:
-#     layer.trainable = False
+# change this code for every attribute - set the layers to true for training
+for layer in base_model.layers:
+    layer.trainable = False
 
 # for i, layer in enumerate(base_model.layers):
 #    print(i, layer.name)
