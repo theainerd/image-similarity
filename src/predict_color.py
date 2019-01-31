@@ -43,7 +43,7 @@ import pandas as pd
 
 #configurations
 
-epochs = 50
+epochs = 20
 batch_size = 32
 dropout = 0.5
 data_dir = "../data/color_balanced_split/"
