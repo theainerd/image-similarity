@@ -229,12 +229,12 @@ model.compile(optimizer = Adam(lr = lr_schedule(0)), loss='categorical_crossentr
 
 lr_scheduler = LearningRateScheduler(lr_schedule)
 lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
-                               cooldown=0,
+                               cooldown=0,validation_steps
                                patience=2,
                                min_lr=0.5e-6)
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint, lr_reducer,lr_scheduler]
-model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=450,validation_steps = 100, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
+model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=420,validation_steps = 100S, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
