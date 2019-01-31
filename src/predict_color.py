@@ -12,8 +12,7 @@ from keras.optimizers import Adam
 from keras.optimizers import SGD 
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
-from keras.applications.inception_v3 import InceptionV3 
-import inception_v3
+from keras.applications.inception_v3 import InceptionV3
 from keras.callbacks import ReduceLROnPlateau,LearningRateScheduler
 from utils import lr_schedule
 from keras.regularizers import l2
@@ -225,7 +224,7 @@ model = Model(inputs=base_model.input, outputs = predictions_color)
 
 # this is the model we will train
 
-model.compile(optimizer = Adam(0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = 'rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
 lr_scheduler = LearningRateScheduler(lr_schedule)
 lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
