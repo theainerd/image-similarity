@@ -44,7 +44,7 @@ import pandas as pd
 #configurations
 
 epochs = 20
-batch_size = 32
+batch_size = 64
 dropout = 0.5
 data_dir = "../data/color_balanced_split/"
 output_models_dir = "../models/label_color/"
@@ -181,7 +181,6 @@ validation_generator = test_datagen.flow_from_directory(
     target_size=(img_width, img_height),
     batch_size=batch_size,
     class_mode="categorical",
-    validation_steps=20,
     shuffle=True)
 
 
@@ -237,5 +236,5 @@ lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint, lr_reducer,lr_scheduler]
-model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
+model.fit_generator(train_generator, epochs = epochs,validation_steps=20, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
