@@ -225,7 +225,7 @@ model = Model(inputs=base_model.input, outputs = predictions_color)
 
 # this is the model we will train
 
-model.compile(optimizer = Adam(lr = lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = SGD(lr = lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
 
 lr_scheduler = LearningRateScheduler(lr_schedule)
 lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
