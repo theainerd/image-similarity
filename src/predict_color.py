@@ -229,7 +229,7 @@ model.compile(optimizer = Adam(lr = lr_schedule(0)), loss='categorical_crossentr
 
 lr_scheduler = LearningRateScheduler(lr_schedule)
 lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
-                               cooldown=0,validation_steps
+                               cooldown=0,
                                patience=2,
                                min_lr=0.5e-6)
 
