@@ -91,7 +91,7 @@ class_weight = class_weight.compute_class_weight(
 
 print(class_weight)
 
-model = load_model("../models/label_color/label_color_inceptionv3_05_0.80.h5")
+model = load_model("../models/label_color/label_color_inceptionv3_11_0.23.h5")
 print ("Model loaded.")
 
 # for i, layer in enumerate(model.layers):
