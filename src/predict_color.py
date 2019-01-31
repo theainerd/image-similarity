@@ -60,6 +60,7 @@ traindf = pd.read_csv("../data/color_balanced.csv")
 traindf = traindf[['_id','color']]
 
 no_of_classes = 15
+
 # class_weight = class_weight.compute_class_weight('balanced',
 #                                                  np.unique(traindf['color']),
 #                                                  traindf['color'])

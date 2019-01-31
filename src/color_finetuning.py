@@ -42,22 +42,21 @@ import pandas as pd
 epochs = 50
 batch_size = 64
 dropout = 0.5
-data_dir = "../data/gender_balanced_split/"
-output_models_dir = "../models/label_gender_final/"
+data_dir = "../data/color_balanced_split/"
+output_models_dir = "../models/label_color/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "label_gender"
+experiment_name = "label_color"
 img_width, img_height = 400, 400
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
 attention_module = 'cbam_block'
 
-traindf = pd.read_csv("../data/gender_balanced.csv")
-traindf = traindf[['_id','gender']]
+traindf = pd.read_csv("../data/color_balanced.csv")
+traindf = traindf[['_id','color']]
 
-no_of_classes = 2
-
+no_of_classes = 15
 
 datagen = ImageDataGenerator(
         rotation_range=40,
@@ -92,7 +91,7 @@ class_weight = class_weight.compute_class_weight(
 
 print(class_weight)
 
-model = load_model("../models/label_gender_final/label_gender_inceptionv3_05_0.80.h5")
+model = load_model("../models/label_color/label_color_inceptionv3_05_0.80.h5")
 print ("Model loaded.")
 
 # for i, layer in enumerate(model.layers):
@@ -115,5 +114,5 @@ model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossent
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
+model.fit_generator(train_generator, epochs = epochs, steps_per_epoch=420,validation_steps = 100,validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
