@@ -44,7 +44,7 @@ import pandas as pd
 #configurations
 
 epochs = 50
-batch_size = 32
+batch_size = 64
 dropout = 0.5
 data_dir = "../data/color_balanced_split/"
 output_models_dir = "../models/label_color/"
@@ -55,8 +55,7 @@ img_width, img_height = 299, 299
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
-# Choose what attention_module to use: cbam_block / se_block / None
-attention_module = 'cbam_block'
+
 
 traindf = pd.read_csv("../data/color_balanced.csv")
 traindf = traindf[['_id','color']]
@@ -194,7 +193,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(weights = 'imagenet',include_top=False,classes=no_of_classes)
+base_model = InceptionV3(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
