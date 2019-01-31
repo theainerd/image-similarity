@@ -44,7 +44,7 @@ import pandas as pd
 #configurations
 
 epochs = 50
-batch_size = 64
+batch_size = 32
 dropout = 0.5
 data_dir = "../data/color_balanced_split/"
 output_models_dir = "../models/label_color/"
