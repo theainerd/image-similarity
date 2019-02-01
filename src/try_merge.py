@@ -6,6 +6,8 @@ model_pattern = load_model("../models/finalmodel/label_pattern_inceptionv3_50_0.
 model_color = load_model("../models/finalmodel/label_color_inceptionv3_49_0.35.h5")
 model_gender = load_model("../models/finalmodel/label_gender_inceptionv3_08_0.83.h5")
 
+print("Preparing Pattern Model.")
+
 pattern_attribute = model_pattern.get_layer('mixed5').output
 pattern_attribute = model_pattern.get_layer('conv2d_55')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('batch_normalization_55')(pattern_attribute)
@@ -138,8 +140,8 @@ pattern_attribute = model_pattern.get_layer('batch_normalization_83')(pattern_at
 pattern_attribute = model_pattern.get_layer('activation_83')(pattern_attribute)
 
 pattern_attribute_activation = model_pattern.get_layer('conv2d_84')(pattern_attribute_activation)
-pattern_attribute_activation = model_pattern.get_layer('batch_normalization_84')(pattern_attribute)
-pattern_attribute_activation = model_pattern.get_layer('activation_84')(pattern_attribute)
+pattern_attribute_activation = model_pattern.get_layer('batch_normalization_84')(pattern_attribute_activation)
+pattern_attribute_activation = model_pattern.get_layer('activation_84')(pattern_attribute_activation)
 
 x = [pattern_attribute,pattern_attribute_activation]
 
@@ -187,8 +189,8 @@ pattern_attribute = model_pattern.get_layer('batch_normalization_92')(pattern_at
 pattern_attribute = model_pattern.get_layer('activation_92')(pattern_attribute)
 
 pattern_attribute_activation = model_pattern.get_layer('conv2d_93')(pattern_attribute_activation)
-pattern_attribute_activation = model_pattern.get_layer('batch_normalization_93')(pattern_attribute)
-pattern_attribute_activation = model_pattern.get_layer('activation_93')(pattern_attribute)
+pattern_attribute_activation = model_pattern.get_layer('batch_normalization_93')(pattern_attribute_activation)
+pattern_attribute_activation = model_pattern.get_layer('activation_93')(pattern_attribute_activation)
 
 x = [pattern_attribute,pattern_attribute_activation]
 
@@ -236,6 +238,8 @@ predictions_pattern = model_pattern.get_layer('predictions_pattern')(pattern_att
 ##########################################################################################################################
 ################################################## Model for color #####################################################
 ##########################################################################################################################
+
+print("Preparing Color Model...")
 
 color_attribute = model_pattern.get_layer('mixed10').output
 color_attribute = model_color.get_layer('conv2d_55')(color_attribute)
@@ -369,8 +373,8 @@ color_attribute = model_color.get_layer('batch_normalization_83')(color_attribut
 color_attribute = model_color.get_layer('activation_83')(color_attribute)
 
 color_attribute_activation = model_color.get_layer('conv2d_84')(color_attribute_activation)
-color_attribute_activation = model_color.get_layer('batch_normalization_84')(color_attribute)
-color_attribute_activation = model_color.get_layer('activation_84')(color_attribute)
+color_attribute_activation = model_color.get_layer('batch_normalization_84')(color_attribute_activation)
+color_attribute_activation = model_color.get_layer('activation_84')(color_attribute_activation)
 
 x = [color_attribute,color_attribute_activation]
 
@@ -418,8 +422,8 @@ color_attribute = model_color.get_layer('batch_normalization_92')(color_attribut
 color_attribute = model_color.get_layer('activation_92')(color_attribute)
 
 color_attribute_activation = model_color.get_layer('conv2d_93')(color_attribute_activation)
-color_attribute_activation = model_color.get_layer('batch_normalization_93')(color_attribute)
-color_attribute_activation = model_color.get_layer('activation_93')(color_attribute)
+color_attribute_activation = model_color.get_layer('batch_normalization_93')(color_attribute_activation)
+color_attribute_activation = model_color.get_layer('activation_93')(color_attribute_activation)
 
 x = [color_attribute,color_attribute_activation]
 
@@ -467,6 +471,8 @@ predictions_color = model_color.get_layer('predictions_color')(color_attribute)
 ##########################################################################################################################
 ################################################## Model for gender #####################################################
 ##########################################################################################################################
+
+print("Preparing Gender Model.")
 
 gender_attribute = model_pattern.get_layer('mixed10').output
 gender_attribute = model_gender.get_layer('conv2d_55')(gender_attribute)
@@ -600,8 +606,8 @@ gender_attribute = model_gender.get_layer('batch_normalization_83')(gender_attri
 gender_attribute = model_gender.get_layer('activation_83')(gender_attribute)
 
 gender_attribute_activation = model_gender.get_layer('conv2d_84')(gender_attribute_activation)
-gender_attribute_activation = model_gender.get_layer('batch_normalization_84')(gender_attribute)
-gender_attribute_activation = model_gender.get_layer('activation_84')(gender_attribute)
+gender_attribute_activation = model_gender.get_layer('batch_normalization_84')(gender_attribute_activation)
+gender_attribute_activation = model_gender.get_layer('activation_84')(gender_attribute_activation)
 
 x = [gender_attribute,gender_attribute_activation]
 
@@ -649,8 +655,8 @@ gender_attribute = model_gender.get_layer('batch_normalization_92')(gender_attri
 gender_attribute = model_gender.get_layer('activation_92')(gender_attribute)
 
 gender_attribute_activation = model_gender.get_layer('conv2d_93')(gender_attribute_activation)
-gender_attribute_activation = model_gender.get_layer('batch_normalization_93')(gender_attribute)
-gender_attribute_activation = model_gender.get_layer('activation_93')(gender_attribute)
+gender_attribute_activation = model_gender.get_layer('batch_normalization_93')(gender_attribute_activation)
+gender_attribute_activation = model_gender.get_layer('activation_93')(gender_attribute_activation)
 
 x = [gender_attribute,gender_attribute_activation]
 
@@ -695,4 +701,4 @@ predictions_gender = model_gender.get_layer('predictions_gender')(gender_attribu
 
 final_model = Model(inputs= model_pattern.input, outputs= [predictions_pattern,predictions_color])
 final_model.save("../models/final_model.h5")
-
+print("Model Created.")
