@@ -233,8 +233,7 @@ merge_pattern_ten = model_pattern.get_layer('mixed10')(x)
 
 #################################################### Final Layers ########################################################
 
-pattern_attribute = model_pattern.get_layer('mixed10')(merge_pattern_ten)
-pattern_attribute = model_pattern.get_layer('global_average_pooling2d_1')(pattern_attribute)
+pattern_attribute = model_pattern.get_layer('global_average_pooling2d_1')(merge_pattern_ten)
 pattern_attribute = model_pattern.get_layer('dropout_1')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('attribute_pattern')(pattern_attribute)
 predictions_pattern = model_pattern.get_layer('predictions_pattern')(pattern_attribute)
@@ -407,9 +406,9 @@ color_attribute_branch_two = model_color.get_layer('conv2d_85')(color_attribute_
 color_attribute_branch_two = model_color.get_layer('batch_normalization_85')(color_attribute_branch_two)
 color_attribute_branch_two = model_color.get_layer('activation_85')(color_attribute_branch_two)
 
-color_attribute_branch_three = model_color.get_layer('conv2d_85')(merge_color_eight)
-color_attribute_branch_three = model_color.get_layer('batch_normalization_85')(color_attribute_branch_three)
-color_attribute_branch_three = model_color.get_layer('activation_85')(color_attribute_branch_three)
+color_attribute_branch_three = model_color.get_layer('conv2d_77')(merge_color_eight)
+color_attribute_branch_three = model_color.get_layer('batch_normalization_77')(color_attribute_branch_three)
+color_attribute_branch_three = model_color.get_layer('activation_77')(color_attribute_branch_three)
 
 x = [merge_color_one,merge_color_two,color_attribute_branch_two,color_attribute_branch_three]
 
@@ -642,9 +641,9 @@ gender_attribute_branch_two = model_gender.get_layer('conv2d_85')(gender_attribu
 gender_attribute_branch_two = model_gender.get_layer('batch_normalization_85')(gender_attribute_branch_two)
 gender_attribute_branch_two = model_gender.get_layer('activation_85')(gender_attribute_branch_two)
 
-gender_attribute_branch_three = model_gender.get_layer('conv2d_85')(merge_gender_eight)
-gender_attribute_branch_three = model_gender.get_layer('batch_normalization_85')(gender_attribute_branch_three)
-gender_attribute_branch_three = model_gender.get_layer('activation_85')(gender_attribute_branch_three)
+gender_attribute_branch_three = model_gender.get_layer('conv2d_77')(merge_gender_eight)
+gender_attribute_branch_three = model_gender.get_layer('batch_normalization_77')(gender_attribute_branch_three)
+gender_attribute_branch_three = model_gender.get_layer('activation_77')(gender_attribute_branch_three)
 
 x = [merge_gender_one,merge_gender_two,gender_attribute_branch_two,gender_attribute_branch_three]
 
