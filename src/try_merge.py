@@ -131,7 +131,6 @@ merge_pattern_eight = model_pattern.get_layer('mixed8')(x)
 
 ############################################################ mixed 9 #######################################################
 
-
 pattern_attribute = model_pattern.get_layer('conv2d_81')(merge_pattern_eight)
 pattern_attribute = model_pattern.get_layer('batch_normalization_81')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('activation_81')(pattern_attribute)
@@ -173,9 +172,9 @@ pattern_attribute_branch_two = model_pattern.get_layer('conv2d_85')(pattern_attr
 pattern_attribute_branch_two = model_pattern.get_layer('batch_normalization_85')(pattern_attribute_branch_two)
 pattern_attribute_branch_two = model_pattern.get_layer('activation_85')(pattern_attribute_branch_two)
 
-pattern_attribute_branch_three = model_pattern.get_layer('conv2d_85')(merge_pattern_eight)
-pattern_attribute_branch_three = model_pattern.get_layer('batch_normalization_85')(pattern_attribute_branch_three)
-pattern_attribute_branch_three = model_pattern.get_layer('activation_85')(pattern_attribute_branch_three)
+pattern_attribute_branch_three = model_pattern.get_layer('conv2d_77')(merge_pattern_eight)
+pattern_attribute_branch_three = model_pattern.get_layer('batch_normalization_77')(pattern_attribute_branch_three)
+pattern_attribute_branch_three = model_pattern.get_layer('activation_77')(pattern_attribute_branch_three)
 
 x = [merge_pattern_one,merge_pattern_two,pattern_attribute_branch_two,pattern_attribute_branch_three]
 
