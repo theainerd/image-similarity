@@ -371,7 +371,6 @@ merge_color_eight = model_color.get_layer('mixed8')(x)
 
 ############################################################ mixed 9 #######################################################
 
-
 color_attribute = model_color.get_layer('conv2d_81')(merge_color_eight)
 color_attribute = model_color.get_layer('batch_normalization_81')(color_attribute)
 color_attribute = model_color.get_layer('activation_81')(color_attribute)
@@ -607,22 +606,23 @@ merge_gender_eight = model_gender.get_layer('mixed8')(x)
 
 ############################################################ mixed 9 #######################################################
 
-
 gender_attribute = model_gender.get_layer('conv2d_81')(merge_gender_eight)
 gender_attribute = model_gender.get_layer('batch_normalization_81')(gender_attribute)
 gender_attribute = model_gender.get_layer('activation_81')(gender_attribute)
 gender_attribute = model_gender.get_layer('conv2d_82')(gender_attribute)
 gender_attribute = model_gender.get_layer('batch_normalization_82')(gender_attribute)
-gender_attribute_activation = model_gender.get_layer('activation_82')(gender_attribute) # connect to conv_2d_84
-gender_attribute = model_gender.get_layer('conv2d_83')(gender_attribute)
-gender_attribute = model_gender.get_layer('batch_normalization_83')(gender_attribute)
-gender_attribute = model_gender.get_layer('activation_83')(gender_attribute)
 
-gender_attribute_activation = model_gender.get_layer('conv2d_84')(gender_attribute_activation)
+gender_attribute_branch_activation = model_gender.get_layer('activation_82')(gender_attribute) # connect to conv_2d_84
+
+gender_attribute_first_activation = model_gender.get_layer('conv2d_83')(gender_attribute_branch_activation)
+gender_attribute_first_activation = model_gender.get_layer('batch_normalization_83')(gender_attribute_first_activation)
+gender_attribute_first_activation = model_gender.get_layer('activation_83')(gender_attribute_first_activation)
+
+gender_attribute_activation = model_gender.get_layer('conv2d_84')(gender_attribute_branch_activation)
 gender_attribute_activation = model_gender.get_layer('batch_normalization_84')(gender_attribute_activation)
 gender_attribute_activation = model_gender.get_layer('activation_84')(gender_attribute_activation)
 
-x = [gender_attribute,gender_attribute_activation]
+x = [gender_attribute_first_activation,gender_attribute_activation]
 
 merge_gender_one = model_gender.get_layer('concatenate_1')(x)
 
