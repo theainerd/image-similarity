@@ -251,7 +251,7 @@ predictions_pattern = model_pattern.get_layer('predictions_pattern')(pattern_att
 print("Preparing Color Model...")
 
 color_attribute = model_pattern.get_layer('mixed5').output
-color_attribute = model_color.get_layer('conv2d_55').name('conv2d_55_xyz')(color_attribute)
+color_attribute = model_color.get_layer('conv2d_55').name = 'conv2d_55_xyz'(color_attribute)
 color_attribute = model_color.get_layer('batch_normalization_55').name('batch_normalization_55_xyz')(color_attribute)
 color_attribute = model_color.get_layer('activation_55').name('activation_55_xyz')(color_attribute)
 color_attribute = model_color.get_layer('conv2d_56').name('conv2d_56_xyz')(color_attribute)
@@ -485,8 +485,8 @@ predictions_color = model_color.get_layer('predictions_color').name('predictions
 print("Preparing gender Model...")
 
 gender_attribute = model_pattern.get_layer('mixed5').output
-gender_attribute = model_gender.get_layer('conv2d_55').name('conv2d_55_abc')(gender_attribute)
-gender_attribute = model_gender.get_layer('batch_normalization_55').name('batch_normalization_55_abc')(gender_attribute)
+gender_attribute = model_gender.get_layer('conv2d_55').name = 'conv2d_55_abc'(gender_attribute)
+gender_attribute = model_gender.get_layer('batch_normalization_55').name = 'batch_normalization_55_abc'(gender_attribute)
 gender_attribute = model_gender.get_layer('activation_55').name('activation_55_abc')(gender_attribute)
 gender_attribute = model_gender.get_layer('conv2d_56').name('conv2d_56_abc')(gender_attribute)
 gender_attribute = model_gender.get_layer('batch_normalization_56').name('batch_normalization_56_abc')(gender_attribute)
