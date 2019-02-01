@@ -376,16 +376,18 @@ color_attribute = model_color.get_layer('batch_normalization_81')(color_attribut
 color_attribute = model_color.get_layer('activation_81')(color_attribute)
 color_attribute = model_color.get_layer('conv2d_82')(color_attribute)
 color_attribute = model_color.get_layer('batch_normalization_82')(color_attribute)
-color_attribute_activation = model_color.get_layer('activation_82')(color_attribute) # connect to conv_2d_84
-color_attribute = model_color.get_layer('conv2d_83')(color_attribute)
-color_attribute = model_color.get_layer('batch_normalization_83')(color_attribute)
-color_attribute = model_color.get_layer('activation_83')(color_attribute)
 
-color_attribute_activation = model_color.get_layer('conv2d_84')(color_attribute_activation)
+color_attribute_branch_activation = model_color.get_layer('activation_82')(color_attribute) # connect to conv_2d_84
+
+color_attribute_first_activation = model_color.get_layer('conv2d_83')(color_attribute_branch_activation)
+color_attribute_first_activation = model_color.get_layer('batch_normalization_83')(color_attribute_first_activation)
+color_attribute_first_activation = model_color.get_layer('activation_83')(color_attribute_first_activation)
+
+color_attribute_activation = model_color.get_layer('conv2d_84')(color_attribute_branch_activation)
 color_attribute_activation = model_color.get_layer('batch_normalization_84')(color_attribute_activation)
 color_attribute_activation = model_color.get_layer('activation_84')(color_attribute_activation)
 
-x = [color_attribute,color_attribute_activation]
+x = [color_attribute_first_activation,color_attribute_activation]
 
 merge_color_one = model_color.get_layer('concatenate_1')(x)
 
@@ -710,6 +712,6 @@ gender_attribute = model_gender.get_layer('dropout_1')(gender_attribute)
 gender_attribute = model_gender.get_layer('attribute_gender')(gender_attribute)
 predictions_gender = model_gender.get_layer('predictions_gender')(gender_attribute)
 
-final_model = Model(inputs= model_pattern.input, outputs= [predictions_pattern,predictions_color,predictions_gender])
+final_model = Model(inputs = model_pattern.input, outputs= [predictions_pattern,predictions_color,predictions_gender])
 final_model.save("../models/final_model.h5")
 print("Model Created.")
