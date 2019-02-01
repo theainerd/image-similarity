@@ -246,7 +246,7 @@ predictions_pattern = model_pattern.get_layer('predictions_pattern')(pattern_att
 
 print("Preparing Color Model...")
 
-color_attribute = model_pattern.get_layer('mixed10').output
+color_attribute = model_pattern.get_layer('mixed5').output
 color_attribute = model_color.get_layer('conv2d_55')(color_attribute)
 color_attribute = model_color.get_layer('batch_normalization_55')(color_attribute)
 color_attribute = model_color.get_layer('activation_55')(color_attribute)
@@ -467,8 +467,7 @@ merge_color_ten = model_color.get_layer('mixed10')(x)
 
 #################################################### Final Layers ########################################################
 
-color_attribute = model_color.get_layer('mixed10')(merge_color_ten)
-color_attribute = model_color.get_layer('global_average_pooling2d_1')(color_attribute)
+color_attribute = model_color.get_layer('global_average_pooling2d_1')(merge_color_ten)
 color_attribute = model_color.get_layer('dropout_1')(color_attribute)
 color_attribute = model_color.get_layer('attribute_color')(color_attribute)
 predictions_color = model_color.get_layer('predictions_color')(color_attribute)
@@ -481,7 +480,7 @@ predictions_color = model_color.get_layer('predictions_color')(color_attribute)
 
 print("Preparing Gender Model.")
 
-gender_attribute = model_pattern.get_layer('mixed10').output
+gender_attribute = model_pattern.get_layer('mixed5').output
 gender_attribute = model_gender.get_layer('conv2d_55')(gender_attribute)
 gender_attribute = model_gender.get_layer('batch_normalization_55')(gender_attribute)
 gender_attribute = model_gender.get_layer('activation_55')(gender_attribute)
@@ -702,8 +701,7 @@ merge_gender_ten = model_gender.get_layer('mixed10')(x)
 
 #################################################### Final Layers ########################################################
 
-gender_attribute = model_gender.get_layer('mixed10')(merge_gender_ten)
-gender_attribute = model_gender.get_layer('global_average_pooling2d_1')(gender_attribute)
+gender_attribute = model_gender.get_layer('global_average_pooling2d_1')(merge_gender_ten)
 gender_attribute = model_gender.get_layer('dropout_1')(gender_attribute)
 gender_attribute = model_gender.get_layer('attribute_gender')(gender_attribute)
 predictions_gender = model_gender.get_layer('predictions_gender')(gender_attribute)
