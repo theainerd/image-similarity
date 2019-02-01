@@ -11,6 +11,10 @@ model_gender = load_model("../models/finalmodel/label_gender_inceptionv3_08_0.83
 
 print("Preparing Pattern Model.")
 
+##########################################################################################################################
+################################################## Model for Pattern #####################################################
+##########################################################################################################################
+
 pattern_attribute = model_pattern.get_layer('mixed5').output
 pattern_attribute = model_pattern.get_layer('conv2d_55')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('batch_normalization_55')(pattern_attribute)
@@ -706,6 +710,6 @@ gender_attribute = model_gender.get_layer('dropout_1')(gender_attribute)
 gender_attribute = model_gender.get_layer('attribute_gender')(gender_attribute)
 predictions_gender = model_gender.get_layer('predictions_gender')(gender_attribute)
 
-final_model = Model(inputs= model_pattern.input, outputs= [predictions_pattern,predictions_color])
+final_model = Model(inputs= model_pattern.input, outputs= [predictions_pattern,predictions_color,predictions_gender])
 final_model.save("../models/final_model.h5")
 print("Model Created.")
