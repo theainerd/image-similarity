@@ -3,13 +3,14 @@ from keras.models import Model
 from keras.utils import plot_model
 
 print("Loading pattern model.\n")
-model_pattern = load_model("../models/finalmodel/label_pattern_inceptionv3_50_0.54.h5")
+# model_pattern = load_model("../models/finalmodel/label_pattern_inceptionv3_50_0.54.h5")
 print("Loading color model.\n")
 model_color = load_model("../models/finalmodel/label_color_inceptionv3_49_0.35.h5")
 print("Loading gender model.\n")
-model_gender = load_model("../models/finalmodel/label_gender_inceptionv3_08_0.83.h5")
-
+# model_gender = load_model("../models/finalmodel/label_gender_inceptionv3_08_0.83.h5")
+print(model_color.summary())
 print("Preparing Pattern Model.")
+
 
 ##########################################################################################################################
 ################################################## Model for Pattern #####################################################
