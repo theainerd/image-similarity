@@ -137,6 +137,7 @@ pattern_attribute = model_pattern.get_layer('batch_normalization_81')(pattern_at
 pattern_attribute = model_pattern.get_layer('activation_81')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('conv2d_82')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('batch_normalization_82')(pattern_attribute)
+
 pattern_attribute_branch_activation = model_pattern.get_layer('activation_82')(pattern_attribute) # connect to conv_2d_84
 
 pattern_attribute_first_activation = model_pattern.get_layer('conv2d_83')(pattern_attribute_branch_activation)
