@@ -137,16 +137,17 @@ pattern_attribute = model_pattern.get_layer('batch_normalization_81')(pattern_at
 pattern_attribute = model_pattern.get_layer('activation_81')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('conv2d_82')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('batch_normalization_82')(pattern_attribute)
-pattern_attribute_activation = model_pattern.get_layer('activation_82')(pattern_attribute) # connect to conv_2d_84
-pattern_attribute = model_pattern.get_layer('conv2d_83')(pattern_attribute)
-pattern_attribute = model_pattern.get_layer('batch_normalization_83')(pattern_attribute)
-pattern_attribute = model_pattern.get_layer('activation_83')(pattern_attribute)
+pattern_attribute_branch_activation = model_pattern.get_layer('activation_82')(pattern_attribute) # connect to conv_2d_84
 
-pattern_attribute_activation = model_pattern.get_layer('conv2d_84')(pattern_attribute_activation)
+pattern_attribute_first_activation = model_pattern.get_layer('conv2d_83')(pattern_attribute_branch_activation)
+pattern_attribute_first_activation = model_pattern.get_layer('batch_normalization_83')(pattern_attribute_first_activation)
+pattern_attribute_first_activation = model_pattern.get_layer('activation_83')(pattern_attribute_first_activation)
+
+pattern_attribute_activation = model_pattern.get_layer('conv2d_84')(pattern_attribute_branch_activation)
 pattern_attribute_activation = model_pattern.get_layer('batch_normalization_84')(pattern_attribute_activation)
 pattern_attribute_activation = model_pattern.get_layer('activation_84')(pattern_attribute_activation)
 
-x = [pattern_attribute,pattern_attribute_activation]
+x = [pattern_attribute_first_activation,pattern_attribute_activation]
 
 merge_pattern_one = model_pattern.get_layer('concatenate_1')(x)
 
@@ -186,16 +187,18 @@ pattern_attribute = model_pattern.get_layer('batch_normalization_90')(pattern_at
 pattern_attribute = model_pattern.get_layer('activation_90')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('conv2d_91')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('batch_normalization_91')(pattern_attribute)
-pattern_attribute_activation = model_pattern.get_layer('activation_91')(pattern_attribute) # connect to conv_2d_84
-pattern_attribute = model_pattern.get_layer('conv2d_92')(pattern_attribute)
-pattern_attribute = model_pattern.get_layer('batch_normalization_92')(pattern_attribute)
-pattern_attribute = model_pattern.get_layer('activation_92')(pattern_attribute)
 
-pattern_attribute_activation = model_pattern.get_layer('conv2d_93')(pattern_attribute_activation)
+pattern_attribute_branch_activation = model_pattern.get_layer('activation_91')(pattern_attribute) # connect to conv_2d_84
+
+pattern_attribute = model_pattern.get_layer('conv2d_92')(pattern_attribute_branch_activation)
+pattern_attribute = model_pattern.get_layer('batch_normalization_92')(pattern_attribute_branch_activation)
+pattern_attribute = model_pattern.get_layer('activation_92')(pattern_attribute_branch_activation)
+
+pattern_attribute_activation = model_pattern.get_layer('conv2d_93')(pattern_attribute_branch_activation)
 pattern_attribute_activation = model_pattern.get_layer('batch_normalization_93')(pattern_attribute_activation)
 pattern_attribute_activation = model_pattern.get_layer('activation_93')(pattern_attribute_activation)
 
-x = [pattern_attribute,pattern_attribute_activation]
+x = [pattern_attribute_branch_activation,pattern_attribute_activation]
 
 merge_pattern_one = model_pattern.get_layer('concatenate_2')(x)
 
@@ -419,16 +422,18 @@ color_attribute = model_color.get_layer('batch_normalization_90')(color_attribut
 color_attribute = model_color.get_layer('activation_90')(color_attribute)
 color_attribute = model_color.get_layer('conv2d_91')(color_attribute)
 color_attribute = model_color.get_layer('batch_normalization_91')(color_attribute)
-color_attribute_activation = model_color.get_layer('activation_91')(color_attribute) # connect to conv_2d_84
-color_attribute = model_color.get_layer('conv2d_92')(color_attribute)
-color_attribute = model_color.get_layer('batch_normalization_92')(color_attribute)
-color_attribute = model_color.get_layer('activation_92')(color_attribute)
 
-color_attribute_activation = model_color.get_layer('conv2d_93')(color_attribute_activation)
+color_attribute_branch_activation = model_color.get_layer('activation_91')(color_attribute) # connect to conv_2d_84
+
+color_attribute = model_color.get_layer('conv2d_92')(color_attribute_branch_activation)
+color_attribute = model_color.get_layer('batch_normalization_92')(color_attribute_branch_activation)
+color_attribute = model_color.get_layer('activation_92')(color_attribute_branch_activation)
+
+color_attribute_activation = model_color.get_layer('conv2d_93')(color_attribute_branch_activation)
 color_attribute_activation = model_color.get_layer('batch_normalization_93')(color_attribute_activation)
 color_attribute_activation = model_color.get_layer('activation_93')(color_attribute_activation)
 
-x = [color_attribute,color_attribute_activation]
+x = [color_attribute_branch_activation,color_attribute_activation]
 
 merge_color_one = model_color.get_layer('concatenate_2')(x)
 
@@ -652,16 +657,18 @@ gender_attribute = model_gender.get_layer('batch_normalization_90')(gender_attri
 gender_attribute = model_gender.get_layer('activation_90')(gender_attribute)
 gender_attribute = model_gender.get_layer('conv2d_91')(gender_attribute)
 gender_attribute = model_gender.get_layer('batch_normalization_91')(gender_attribute)
-gender_attribute_activation = model_gender.get_layer('activation_91')(gender_attribute) # connect to conv_2d_84
-gender_attribute = model_gender.get_layer('conv2d_92')(gender_attribute)
-gender_attribute = model_gender.get_layer('batch_normalization_92')(gender_attribute)
-gender_attribute = model_gender.get_layer('activation_92')(gender_attribute)
 
-gender_attribute_activation = model_gender.get_layer('conv2d_93')(gender_attribute_activation)
+gender_attribute_branch_activation = model_gender.get_layer('activation_91')(gender_attribute) # connect to conv_2d_84
+
+gender_attribute = model_gender.get_layer('conv2d_92')(gender_attribute_branch_activation)
+gender_attribute = model_gender.get_layer('batch_normalization_92')(gender_attribute_branch_activation)
+gender_attribute = model_gender.get_layer('activation_92')(gender_attribute_branch_activation)
+
+gender_attribute_activation = model_gender.get_layer('conv2d_93')(gender_attribute_branch_activation)
 gender_attribute_activation = model_gender.get_layer('batch_normalization_93')(gender_attribute_activation)
 gender_attribute_activation = model_gender.get_layer('activation_93')(gender_attribute_activation)
 
-x = [gender_attribute,gender_attribute_activation]
+x = [gender_attribute_branch_activation,gender_attribute_activation]
 
 merge_gender_one = model_gender.get_layer('concatenate_2')(x)
 
