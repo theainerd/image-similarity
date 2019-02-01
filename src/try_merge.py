@@ -712,7 +712,7 @@ gender_attribute = model_gender.get_layer('dropout_1')(gender_attribute)
 gender_attribute = model_gender.get_layer('attribute_gender')(gender_attribute)
 predictions_gender = model_gender.get_layer('predictions_gender')(gender_attribute)
 
-final_model = Model(inputs = model_pattern.input, outputs= [predictions_pattern])
+final_model = Model(inputs = model_pattern.input, outputs= predictions_color)
 # final_model = Model(inputs = model_pattern.input, outputs= [predictions_pattern,predictions_color,predictions_gender])
 final_model.save("../models/final_model.h5")
 print("Model Created.")
