@@ -305,7 +305,7 @@ merge_color_six = model_color.get_layer('mixed6_color')(x)
 ########################################################## Merge 7 ###########################################################
 
 
-color_attribute = model_color.get_layer('conv2d_65')(merge_color_six)
+color_attribute = model_color.get_layer('conv2d_65_color')(merge_color_six)
 color_attribute = model_color.get_layer('batch_normalization_65_color')(color_attribute)
 color_attribute = model_color.get_layer('activation_65_color')(color_attribute)
 color_attribute = model_color.get_layer('conv2d_66_color')(color_attribute)
@@ -543,7 +543,7 @@ merge_gender_six = model_gender.get_layer('mixed6_gender')(x)
 ########################################################## Merge 7 ###########################################################
 
 
-gender_attribute = model_gender.get_layer('conv2d_65')(merge_gender_six)
+gender_attribute = model_gender.get_layer('conv2d_65_color')(merge_gender_six)
 gender_attribute = model_gender.get_layer('batch_normalization_65_gender')(gender_attribute)
 gender_attribute = model_gender.get_layer('activation_65_gender')(gender_attribute)
 gender_attribute = model_gender.get_layer('conv2d_66_gender')(gender_attribute)
