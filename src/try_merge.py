@@ -11,7 +11,7 @@ model_gender = load_model("../models/finalmodel/label_gender_inceptionv3_08_0.83
 print("Preparing Pattern Model.")
 
 for layer in model_color.layers:
-    layer.name = layer.name + str("_colors")
+    layer.name = layer.name + str("_color")
 
 for layer in model_gender.layers:
     layer.name = layer.name + str("_gender")
