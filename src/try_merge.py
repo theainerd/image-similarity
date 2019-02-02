@@ -305,7 +305,7 @@ merge_color_six = model_color.get_layer('mixed6')(x)
 ########################################################## Merge 7 ###########################################################
 
 
-color_attribute = model_color.get_layer('conv2d_65')'conv2d_65_color'(merge_color_six)
+color_attribute = model_color.get_layer('conv2d_65')(merge_color_six)
 color_attribute = model_color.get_layer('batch_normalization_65_color')(color_attribute)
 color_attribute = model_color.get_layer('activation_65_color')(color_attribute)
 color_attribute = model_color.get_layer('conv2d_66_color')(color_attribute)
