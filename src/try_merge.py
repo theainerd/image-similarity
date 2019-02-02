@@ -473,7 +473,7 @@ color_attribute_branch_three = model_color.get_layer('activation_86_color')(colo
 
 x = [merge_color_one,merge_color_two,color_attribute_branch_two,color_attribute_branch_three]
 
-merge_color_ten = model_color.get_layer('mixed10')(x)
+merge_color_ten = model_color.get_layer('mixed10_color')(x)
 
 #################################################### Final Layers ########################################################
 
@@ -711,7 +711,7 @@ gender_attribute_branch_three = model_gender.get_layer('activation_86_gender')(g
 
 x = [merge_gender_one,merge_gender_two,gender_attribute_branch_two,gender_attribute_branch_three]
 
-merge_gender_ten = model_gender.get_layer('mixed10')(x)
+merge_gender_ten = model_gender.get_layer('mixed10_gender')(x)
 
 #################################################### Final Layers ########################################################
 
