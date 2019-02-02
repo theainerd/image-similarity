@@ -543,7 +543,7 @@ merge_gender_six = model_gender.get_layer('mixed6')(x)
 ########################################################## Merge 7 ###########################################################
 
 
-gender_attribute = model_gender.get_layer('conv2d_65')'conv2d_65_gender'(merge_gender_six)
+gender_attribute = model_gender.get_layer('conv2d_65')(merge_gender_six)
 gender_attribute = model_gender.get_layer('batch_normalization_65_gender')(gender_attribute)
 gender_attribute = model_gender.get_layer('activation_65_gender')(gender_attribute)
 gender_attribute = model_gender.get_layer('conv2d_66_gender')(gender_attribute)
