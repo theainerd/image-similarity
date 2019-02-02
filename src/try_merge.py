@@ -344,7 +344,7 @@ color_attribute_branch_three = model_color.get_layer('activation_61_color')(colo
 # Merge layers
 x = [color_attribute,color_attribute_branch,color_attribute_branch_two,color_attribute_branch_three]
 
-merge_color_seven = model_color.get_layer('mixed7')(x)
+merge_color_seven = model_color.get_layer('mixed7_color')(x)
 
 ############################################################# mixed 8 ###################################################
 
@@ -582,7 +582,7 @@ gender_attribute_branch_three = model_gender.get_layer('activation_61_gender')(g
 # Merge layers
 x = [gender_attribute,gender_attribute_branch,gender_attribute_branch_two,gender_attribute_branch_three]
 
-merge_gender_seven = model_gender.get_layer('mixed7')(x)
+merge_gender_seven = model_gender.get_layer('mixed7_gender')(x)
 
 ############################################################# mixed 8 ###################################################
 
