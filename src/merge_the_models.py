@@ -7,7 +7,7 @@ model_color = load_model("../models/label_color_bottleneck/label_color_inception
 for layer in model_color.layers:
     layer.name = layer.name + str("_color")
 
-
+print(model_pattern.summary())
 pattern_attribute = model_pattern.get_layer('mixed10').output
 pattern_attribute = model_pattern.get_layer('global_average_pooling2d_1')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('dropout_1')(pattern_attribute)
@@ -25,6 +25,5 @@ predictions_color = model_color.get_layer('predictions_color_color')(color_attri
 
 final_model = Model(inputs= model_pattern.input, outputs= [predictions_pattern,predictions_color])
 
-print(model_pattern.summary())
-print(model_color.summary())
+
 final_model.save("../models/final_model_new.h5")
