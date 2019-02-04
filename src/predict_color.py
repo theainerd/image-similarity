@@ -46,11 +46,11 @@ epochs = 20
 batch_size = 64
 dropout = 0.5
 data_dir = "../data/color_balanced_split/"
-output_models_dir = "../models/label_color/"
+output_models_dir = "../models/label_color_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_color"
-img_width, img_height = 299, 299
+img_width, img_height = 400,400
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
@@ -193,6 +193,8 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
+K.set_learning_phase(0)
+
 base_model = InceptionV3(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
@@ -204,6 +206,7 @@ base_model = InceptionV3(weights = 'imagenet',include_top=False)
 for layer in base_model.layers:
     layer.trainable = False
 
+K.set_learning_phase(1)
 # for i, layer in enumerate(base_model.layers):
 #    print(i, layer.name)
 
@@ -213,8 +216,9 @@ color_attribute = base_model.output
 color_attribute = GlobalAveragePooling2D()(color_attribute)
 # let's add a fully-connected layer
 color_attribute = Dropout(dropout)(color_attribute)
-color_attribute_layer = Dense(1024, activation='relu',name = "attribute_color")(color_attribute)
-predictions_color = Dense(no_of_classes,activation = 'softmax',name="predictions_color")(color_attribute_layer)
+color_attribute = Dense(1024, activation='relu',name = "attribute_color")(color_attribute)
+color_attribute = Dropout(dropout)(color_attribute)
+predictions_color = Dense(no_of_classes,activation = 'softmax',name="predictions_color")(color_attribute)
 
 model = Model(inputs=base_model.input, outputs = predictions_color)
 
@@ -227,14 +231,9 @@ model = Model(inputs=base_model.input, outputs = predictions_color)
 
 model.compile(optimizer = 'rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
-lr_scheduler = LearningRateScheduler(lr_schedule)
-lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
-                               cooldown=0,
-                               patience=2,
-                               min_lr=0.5e-6)
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint, lr_reducer,lr_scheduler]
+checkpoints =[checkpoint]
 model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=420,validation_steps = 100, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
