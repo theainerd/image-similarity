@@ -9,9 +9,10 @@ final_model = load_model("../models/final_model.h5")
 model_pattern = load_model("../models/finalmodel/label_pattern_inceptionv3_50_0.54.h5")
 
 
-for i,layer in enumerate(final_model.layers[:5]):
+for i,layer in enumerate(final_model.layers[150]):
     weights = layer.get_weights()
     print(i,weights)
 
-pattern_attribute = final_model.get_layer('mixed5').output
-print(pattern_attribute.get_weights())
+for i,layer in enumerate(final_model.layers[150]):
+    weights = layer.get_weights()
+    print(i,weights)
