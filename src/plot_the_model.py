@@ -11,6 +11,10 @@ model_pattern = load_model("../models/finalmodel/label_pattern_inceptionv3_50_0.
 
 for i,layer in enumerate(final_model.layers):
     print(i,layer.name)
+
+for i,layer in enumerate(model_pattern.layers):
+    print(i,layer.name)
+
 # 
 # for i,layer in enumerate(final_model.layers[289:291]):
 #     weights = layer.get_weights()
