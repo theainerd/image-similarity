@@ -1,6 +1,7 @@
-from keras.models import load_model,
+from keras.models import load_model
 from keras.models import Model
 from keras.utils import plot_model
+from keras import layers
 
 print("Loading  model.\n")
 
