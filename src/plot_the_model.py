@@ -9,7 +9,6 @@ final_model = load_model("../models/final_model.h5")
 model_pattern = load_model("../models/finalmodel/label_pattern_inceptionv3_50_0.54.h5")
 
 
-print(final_model.summary())
 for i,layer in enumerate(final_model.layers):
     print(i,layer.name)
 # 
