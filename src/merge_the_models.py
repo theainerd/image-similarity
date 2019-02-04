@@ -8,24 +8,24 @@ for layer in model_color.layers:
     layer.name = layer.name + str("_color")
 
 
-pattern_attribute = model_pattern.get_layer('mixed10').output
-pattern_attribute = model_pattern.get_layer('global_average_pooling2d_1')(pattern_attribute)
-pattern_attribute = model_pattern.get_layer('dropout_1')(pattern_attribute)
-pattern_attribute = model_pattern.get_layer('x')(pattern_attribute)
-predictions_pattern = model_pattern.get_layer('predictions')(pattern_attribute)
+# pattern_attribute = model_pattern.get_layer('mixed10').output
+# pattern_attribute = model_pattern.get_layer('global_average_pooling2d_1')(pattern_attribute)
+# pattern_attribute = model_pattern.get_layer('dropout_1')(pattern_attribute)
+# pattern_attribute = model_pattern.get_layer('x')(pattern_attribute)
+# predictions_pattern = model_pattern.get_layer('predictions')(pattern_attribute)
 
-# color_attribute = model.get_layer('global_average_pooling2d_2')(color_attribute)
-# color_attribute = model.get_layer('dropout_2')(color_attribute)
-# color_attribute = model.get_layer('attribute_color')(color_attribute)
-# color_attribute = model.get_layer('predictions_color')(color_attribute)
+# # color_attribute = model.get_layer('global_average_pooling2d_2')(color_attribute)
+# # color_attribute = model.get_layer('dropout_2')(color_attribute)
+# # color_attribute = model.get_layer('attribute_color')(color_attribute)
+# # color_attribute = model.get_layer('predictions_color')(color_attribute)
 
-color_attribute = model_pattern.get_layer('mixed10_color').output
-color_attribute = model_color.get_layer('global_average_pooling2d_1_color')(color_attribute)
-color_attribute = model_color.get_layer('dropout_2_color')(color_attribute)
-color_attribute = model_color.get_layer('attribute_color_color')(color_attribute)
-predictions_color = model_color.get_layer('predictions_color_color')(color_attribute)
+# color_attribute = model_pattern.get_layer('mixed10_color').output
+# color_attribute = model_color.get_layer('global_average_pooling2d_1_color')(color_attribute)
+# color_attribute = model_color.get_layer('dropout_2_color')(color_attribute)
+# color_attribute = model_color.get_layer('attribute_color_color')(color_attribute)
+# predictions_color = model_color.get_layer('predictions_color_color')(color_attribute)
 
-final_model = Model(inputs= model_pattern.input, outputs= [predictions_pattern,predictions_color])
+# final_model = Model(inputs= model_pattern.input, outputs= [predictions_pattern,predictions_color])
 
 print(model_pattern.summary())
 print(model_color.summary())
