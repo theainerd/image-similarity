@@ -200,13 +200,13 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = inception_v3.InceptionV3(weights = 'imagenet',include_top=False,classes=no_of_classes, attention_module=attention_module)
+base_model = inception_v3.InceptionV3(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
 # for layer in model.layers[172:]:
 #    layer.trainable = True
-
+K.set_learning_phase(0)
 # change this code for every attribute - set the layers to true for training
 for layer in base_model.layers:
     layer.trainable = False
