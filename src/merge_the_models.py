@@ -16,7 +16,7 @@ pattern_attribute = model_pattern.get_layer('dropout_2')(pattern_attribute)
 predictions_pattern = model_pattern.get_layer('dense_2')(pattern_attribute)
 
 print(model_color.summary())
-color_attribute = model_pattern.get_layer('mixed10_color').output
+color_attribute = model_pattern.get_layer('mixed10').output
 color_attribute = model_color.get_layer('global_average_pooling2d_1_color')(color_attribute)
 color_attribute = model_color.get_layer('dropout_1_color')(color_attribute)
 color_attribute = model_color.get_layer('attribute_color_color')(color_attribute)
