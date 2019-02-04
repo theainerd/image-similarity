@@ -27,5 +27,6 @@ predictions_color = model_color.get_layer('predictions_color_color')(color_attri
 
 final_model = Model(inputs= model_pattern.input, outputs= [predictions_pattern,predictions_color])
 
-print(final_model.summary())
+print(model_pattern.summary())
+print(model_color.summary())
 final_model.save("../models/final_model_new.h5")
