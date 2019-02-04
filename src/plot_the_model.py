@@ -9,7 +9,6 @@ model_pattern = load_model("../models/finalmodel/label_pattern_inceptionv3_50_0.
 
 final_attribute = final_model.get_layer('mixed5').output
 final_attribute = model_pattern.get_layer('conv2d_55')(final_attribute)
-print(final_attribute.get_weights())
 
 for i,layer in final_model.layers:
     weights = layer.get_weights()
