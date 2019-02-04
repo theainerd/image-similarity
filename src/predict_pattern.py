@@ -46,7 +46,7 @@ epochs = 50
 batch_size = 64
 dropout = 0.5
 data_dir = "../data/pattern_balanced_split/"
-output_models_dir = "../models/label_pattern_final/"
+output_models_dir = "../models/label_pattern_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_pattern"
@@ -223,6 +223,7 @@ pattern_attribute = GlobalAveragePooling2D()(pattern_attribute)
 # let's add a fully-connected layer
 pattern_attribute = Dropout(dropout)(pattern_attribute)
 pattern_attribute_layer = Dense(1024, activation='relu',name = "attribute_pattern")(pattern_attribute)
+pattern_attribute = Dropout(dropout)(pattern_attribute)
 predictions_pattern = Dense(no_of_classes,activation = 'softmax',name="predictions_pattern")(pattern_attribute_layer)
 
 model = Model(inputs=base_model.input, outputs = predictions_pattern)
@@ -234,13 +235,7 @@ model = Model(inputs=base_model.input, outputs = predictions_pattern)
 
 # this is the model we will train
 
-model.compile(optimizer = Adam(lr = lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
-
-lr_scheduler = LearningRateScheduler(lr_schedule)
-lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
-                               cooldown=0,
-                               patience=3,
-                               min_lr=0.5e-6)
+model.compile(optimizer = 'rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
