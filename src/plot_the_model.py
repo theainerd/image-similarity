@@ -16,7 +16,7 @@ for i,layer in enumerate(model_pattern.layers):
     print(i,layer.name)
 
 
-for i,layer in enumerate(final_model.layers[590:594]):
+for i,layer in enumerate(final_model.layers[590:]):
     weights = layer.get_weights()
     print(i,weights)
 
