@@ -11,8 +11,8 @@ for layer in model_color.layers:
 pattern_attribute = model_pattern.get_layer('mixed10').output
 pattern_attribute = model_pattern.get_layer('global_average_pooling2d_1')(pattern_attribute)
 pattern_attribute = model_pattern.get_layer('dropout_1')(pattern_attribute)
-pattern_attribute = model_pattern.get_layer('attribute_pattern')(pattern_attribute)
-predictions_pattern = model_pattern.get_layer('predictions_pattern')(pattern_attribute)
+pattern_attribute = model_pattern.get_layer('x')(pattern_attribute)
+predictions_pattern = model_pattern.get_layer('predictions')(pattern_attribute)
 
 # color_attribute = model.get_layer('global_average_pooling2d_2')(color_attribute)
 # color_attribute = model.get_layer('dropout_2')(color_attribute)
@@ -28,4 +28,4 @@ predictions_color = model_color.get_layer('predictions_color_color')(color_attri
 final_model = Model(inputs= model_pattern.input, outputs= [predictions_pattern,predictions_color])
 
 print(final_model.summary())
-final_model.save("../models/final_model.h5")
+final_model.save("../models/final_model_new.h5")
