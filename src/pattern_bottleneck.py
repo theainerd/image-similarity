@@ -42,14 +42,14 @@ import pandas as pd
 #configurations
 
 epochs = 50
-batch_size = 64
+batch_size = 32
 dropout = 0.5
 data_dir = "../data/pattern_balanced_split/"
 output_models_dir = "../models/label_pattern/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_pattern"
-img_width, img_height = 244, 244
+img_width, img_height = 400, 400
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
@@ -64,14 +64,6 @@ traindf = traindf[traindf.pattern != "rivets"]
 traindf = traindf[traindf.pattern != "pinstripe"]
 traindf = traindf[traindf.pattern != "flounce"]
 traindf = traindf[traindf.pattern != "gemstones"]
-
-
-
-no_of_classes = len(traindf['pattern'].unique())
-print(no_of_classes)
-class_weight = class_weight.compute_class_weight('balanced',
-                                                 np.unique(traindf['pattern']),
-                                                 traindf['pattern'])
 
 
 if validate_images:
@@ -192,6 +184,13 @@ validation_generator = test_datagen.flow_from_directory(
 	batch_size=batch_size,
 	class_mode="categorical",
 	shuffle=True)
+
+class_weight = class_weight.compute_class_weight(
+               'balanced',
+                np.unique(train_generator.classes), 
+                train_generator.classes)
+
+print(class_weight)
 
 print("Downloading Base Model.....")
 
