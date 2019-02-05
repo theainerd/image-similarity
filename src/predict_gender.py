@@ -13,7 +13,7 @@ from keras.optimizers import SGD
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3 
-import inception_v3
+from keras.applications.vgg16 import VGG16
 from keras.callbacks import ReduceLROnPlateau,LearningRateScheduler
 from utils import lr_schedule
 from keras.regularizers import l2
@@ -55,8 +55,6 @@ img_width, img_height = 299, 299
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
-# Choose what attention_module to use: cbam_block / se_block / None
-attention_module = 'cbam_block'
 
 traindf = pd.read_csv("../data/gender_balanced.csv")
 traindf = traindf[['_id','gender']]
@@ -194,7 +192,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(weights = 'imagenet',include_top=False,classes=no_of_classes)
+base_model = VGG16(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
@@ -226,16 +224,10 @@ model = Model(inputs=base_model.input, outputs = predictions_gender)
 
 # this is the model we will train
 
-model.compile(optimizer = Adam(lr = lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
-
-lr_scheduler = LearningRateScheduler(lr_schedule)
-lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
-                               cooldown=0,
-                               patience=2,
-                               min_lr=0.5e-6)
+model.compile(optimizer = 'rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint, lr_reducer,lr_scheduler]
+checkpoints =[checkpoint]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
