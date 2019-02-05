@@ -15,6 +15,7 @@ from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.resnet50 import ResNet50
 from keras.applications.vgg16 import VGG16
+from keras.applications.vgg19 import VGG19
 from keras.regularizers import l2
 from keras.applications.resnet50 import preprocess_input
 from keras.applications.resnet50 import ResNet50
@@ -195,7 +196,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = VGG16(include_top=False, weights='imagenet')
+base_model = VGG19(include_top=False, weights='imagenet')
 
 for layer in base_model.layers:
     layer.trainable = False
