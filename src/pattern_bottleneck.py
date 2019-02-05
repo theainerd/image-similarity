@@ -52,9 +52,9 @@ output_models_dir = "../models/label_pattern_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_pattern_xception"
-img_width, img_height = 224, 224
+img_width, img_height = 299, 299
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_vgg16_bottleneck_final.h5'
+final_model_name = experiment_name + '_xception_bottleneck.h5'
 validate_images = True
 
 traindf = pd.read_csv("../data/pattern_balanced.csv")
@@ -212,7 +212,7 @@ x = Dropout(dropout)(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
 
 model = Model(input=base_model.input, output=predictions)
-model.compile(optimizer='rmsprop', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
+model.compile(optimizer=Adam(0.001), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
