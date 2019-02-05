@@ -15,6 +15,7 @@ from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.vgg16 import VGG16
 from keras.applications.xception import Xception
+from keras.applications.nasnet import NASNetLarge
 from keras.callbacks import ReduceLROnPlateau,LearningRateScheduler
 from utils import lr_schedule
 from keras.regularizers import l2
@@ -195,7 +196,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = Xception(weights = 'imagenet',include_top=False)
+base_model = NASNetLarge(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
