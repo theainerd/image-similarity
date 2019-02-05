@@ -43,7 +43,7 @@ import pandas as pd
 #configurations
 no_of_classes = 6
 epochs = 50
-batch_size = 256
+batch_size = 128
 dropout = 0.5
 data_dir = "../data/pattern_balanced_split/"
 output_models_dir = "../models/label_pattern_bottleneck/"
