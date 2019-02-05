@@ -13,6 +13,7 @@ from keras.optimizers import SGD
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
+from keras.applications.resnet50 import ResNet50
 from keras.applications.vgg16 import VGG16
 from keras.regularizers import l2
 from keras.applications.resnet50 import preprocess_input
@@ -40,7 +41,7 @@ import pandas as pd
 
 
 #configurations
-no_of_classes = 14
+no_of_classes = 6
 epochs = 50
 batch_size = 32
 dropout = 0.5
@@ -196,7 +197,7 @@ print("Downloading Base Model.....")
 
 K.set_learning_phase(0)
 
-base_model = InceptionV3(include_top=False, weights='imagenet')
+base_model = ResNet50(include_top=False, weights='imagenet')
 
 for layer in base_model.layers:
     layer.trainable = False
