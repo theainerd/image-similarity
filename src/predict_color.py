@@ -13,6 +13,7 @@ from keras.optimizers import SGD
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
+from keras.applications.vgg16 import VGG16
 from keras.callbacks import ReduceLROnPlateau,LearningRateScheduler
 from utils import lr_schedule
 from keras.regularizers import l2
@@ -52,7 +53,7 @@ validation_data_dir = data_dir + 'validation'
 experiment_name = "label_color"
 img_width, img_height = 400,400
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_resnet50_bottleneck_final.h5'
+final_model_name = experiment_name + '_vgg16_bottleneck_final.h5'
 validate_images = True
 
 
@@ -193,7 +194,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(weights = 'imagenet',include_top=False)
+base_model = VGG16(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
