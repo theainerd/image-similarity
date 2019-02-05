@@ -50,10 +50,10 @@ data_dir = "../data/color_balanced_split/"
 output_models_dir = "../models/label_color_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "label_color"
+experiment_name = "label_color_resnet50"
 img_width, img_height = 224,224
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_vgg16_bottleneck_final.h5'
+final_model_name = experiment_name + '_bottleneck_final.h5'
 validate_images = True
 
 
