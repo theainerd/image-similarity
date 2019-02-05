@@ -52,7 +52,7 @@ validation_data_dir = data_dir + 'validation'
 experiment_name = "label_pattern"
 img_width, img_height = 224, 224
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
+final_model_name = experiment_name + '_vgg16_bottleneck_final.h5'
 validate_images = True
 
 traindf = pd.read_csv("../data/pattern_balanced.csv")
@@ -215,5 +215,5 @@ model.compile(optimizer='rmsprop', loss = 'categorical_crossentropy', metrics = 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=140,validation_steps = 36, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
+model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=278,validation_steps = 70, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
