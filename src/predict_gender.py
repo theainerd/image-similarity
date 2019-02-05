@@ -57,9 +57,6 @@ original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_resnet50_bottleneck.h5'
 validate_images = True
 
-traindf = pd.read_csv("../data/gender_balanced.csv")
-traindf = traindf[['_id','gender']]
-
 no_of_classes = 2
 # class_weight = class_weight.compute_class_weight('balanced',
 #                                                  np.unique(traindf['gender']),
