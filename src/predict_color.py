@@ -14,6 +14,7 @@ from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.vgg16 import VGG16
+from keras.applications.xception import Xception
 from keras.callbacks import ReduceLROnPlateau,LearningRateScheduler
 from utils import lr_schedule
 from keras.regularizers import l2

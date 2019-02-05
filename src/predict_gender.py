@@ -14,6 +14,7 @@ from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
 from keras.applications.inception_v3 import InceptionV3 
 from keras.applications.vgg16 import VGG16
+from keras.applications.xception import Xception 
 from keras.callbacks import ReduceLROnPlateau,LearningRateScheduler
 from utils import lr_schedule
 from keras.regularizers import l2
@@ -51,7 +52,7 @@ output_models_dir = "../models/label_gender_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "bottleneck_gender"
-img_width, img_height = 224, 224
+img_width, img_height = 299, 299
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_resnet50_bottleneck.h5'
 validate_images = True
@@ -192,7 +193,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = ResNet50(weights = 'imagenet',include_top=False)
+base_model = Xception(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
