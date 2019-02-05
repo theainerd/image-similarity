@@ -17,6 +17,7 @@ from keras.applications.resnet50 import ResNet50
 from keras.applications.vgg16 import VGG16
 from keras.applications.vgg19 import VGG19
 from keras.applications.xception import Xception
+from keras.applications.nasnet import NASNetLarge
 from keras.regularizers import l2
 from keras.applications.resnet50 import preprocess_input
 from keras.applications.resnet50 import ResNet50
@@ -52,7 +53,7 @@ output_models_dir = "../models/label_pattern_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_pattern_xception"
-img_width, img_height = 299, 299
+img_width, img_height = 331,331
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_xception_bottleneck.h5'
 validate_images = True
