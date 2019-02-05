@@ -43,7 +43,7 @@ import pandas as pd
 #configurations
 no_of_classes = 6
 epochs = 50
-batch_size = 32
+batch_size = 256
 dropout = 0.5
 data_dir = "../data/pattern_balanced_split/"
 output_models_dir = "../models/label_pattern_bottleneck/"
@@ -219,5 +219,5 @@ model.compile(optimizer='rmsprop', loss = 'categorical_crossentropy', metrics = 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=620,validation_steps = 155, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
+model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=70,validation_steps = 18, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
