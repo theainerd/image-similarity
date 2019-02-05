@@ -193,8 +193,6 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-K.set_learning_phase(0)
-
 base_model = InceptionV3(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
@@ -206,7 +204,6 @@ base_model = InceptionV3(weights = 'imagenet',include_top=False)
 for layer in base_model.layers:
     layer.trainable = False
 
-K.set_learning_phase(1)
 # for i, layer in enumerate(base_model.layers):
 #    print(i, layer.name)
 

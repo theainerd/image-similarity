@@ -43,14 +43,14 @@ import pandas as pd
 #configurations
 no_of_classes = 6
 epochs = 50
-batch_size = 128
+batch_size = 64
 dropout = 0.5
 data_dir = "../data/pattern_balanced_split/"
 output_models_dir = "../models/label_pattern_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_pattern"
-img_width, img_height = 400, 400
+img_width, img_height = 224, 224
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
 validate_images = True
