@@ -51,7 +51,7 @@ output_models_dir = "../models/label_color_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
 experiment_name = "label_color"
-img_width, img_height = 400,400
+img_width, img_height = 224,224
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_vgg16_bottleneck_final.h5'
 validate_images = True
@@ -60,7 +60,7 @@ validate_images = True
 traindf = pd.read_csv("../data/color_balanced.csv")
 traindf = traindf[['_id','color']]
 
-no_of_classes = 15
+no_of_classes = 8
 
 # class_weight = class_weight.compute_class_weight('balanced',
 #                                                  np.unique(traindf['color']),
