@@ -196,7 +196,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = VGG19(include_top=False, weights='imagenet')
+base_model = InceptionV3(include_top=False, weights='imagenet')
 
 for layer in base_model.layers:
     layer.trainable = False
