@@ -219,5 +219,5 @@ model.compile(optimizer='rmsprop', loss = 'categorical_crossentropy', metrics = 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=70,validation_steps = 18, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
+model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=140,validation_steps = 36, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
