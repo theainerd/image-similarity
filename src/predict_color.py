@@ -43,7 +43,7 @@ import pandas as pd
 #configurations
 
 epochs = 20
-batch_size = 64
+batch_size = 128
 dropout = 0.5
 data_dir = "../data/color_balanced_split/"
 output_models_dir = "../models/label_color_bottleneck/"
@@ -52,7 +52,7 @@ validation_data_dir = data_dir + 'validation'
 experiment_name = "label_color"
 img_width, img_height = 400,400
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_inceptionv3_bottleneck_final.h5'
+final_model_name = experiment_name + '_resnet50_bottleneck_final.h5'
 validate_images = True
 
 
