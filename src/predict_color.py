@@ -194,7 +194,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = VGG16(weights = 'imagenet',include_top=False)
+base_model = ResNet50(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
