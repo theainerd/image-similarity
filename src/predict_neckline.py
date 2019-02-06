@@ -48,26 +48,15 @@ no_of_classes = 6
 epochs = 50
 batch_size = 64
 dropout = 0.5
-data_dir = "../data/pattern_balanced_split/"
-output_models_dir = "../models/label_pattern_bottleneck/"
+data_dir = "../data/neckline_split_balanced/"
+output_models_dir = "../models/label_neckline_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "label_pattern_NASnet"
+experiment_name = "label_neckline_resnet50"
 img_width, img_height = 331,331
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_xception_bottleneck.h5'
+final_model_name = experiment_name + '_bottleneck.h5'
 validate_images = True
-
-traindf = pd.read_csv("../data/pattern_balanced.csv")
-traindf = traindf[['_id','pattern']]
-traindf = traindf[traindf.pattern != "geometric"]
-traindf = traindf[traindf.pattern != "fotoprint"]
-traindf = traindf[traindf.pattern != "paisley"]
-traindf = traindf[traindf.pattern != "stud"]
-traindf = traindf[traindf.pattern != "rivets"]
-traindf = traindf[traindf.pattern != "pinstripe"]
-traindf = traindf[traindf.pattern != "flounce"]
-traindf = traindf[traindf.pattern != "gemstones"]
 
 
 if validate_images:
