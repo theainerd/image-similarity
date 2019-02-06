@@ -187,7 +187,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(include_top=False, weights='imagenet')
+base_model = Xception(include_top=False, weights='imagenet')
 
 for layer in base_model.layers:
     layer.trainable = False
