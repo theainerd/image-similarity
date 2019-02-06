@@ -204,10 +204,11 @@ x = Dense(1024, activation='relu')(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
 
 model = Model(input=base_model.input, output=predictions)
-model.compile(optimizer=Adam(0.001), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
+print(model.summary())
+# model.compile(optimizer=Adam(0.001), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
-filepath= output_models_dir + experiment_name + "_{epoch:02d}_{val_acc:.2f}.h5"
-checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint]
-model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=278,validation_steps = 70, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
-model.save(final_model_name)
+# filepath= output_models_dir + experiment_name + "_{epoch:02d}_{val_acc:.2f}.h5"
+# checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
+# checkpoints =[checkpoint]
+# model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=278,validation_steps = 70, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
+# model.save(final_model_name)
