@@ -197,7 +197,7 @@ for layer in base_model.layers:
 ## set model architechture
 x = base_model.output
 x = attach_attention_module(x, attention_module)
-# x = GlobalAveragePooling2D()(x)
+x = GlobalAveragePooling2D()(x)
 x = Dropout(dropout)(x)
 x = Dense(1024, activation='relu')(x)
 # x = Dropout(dropout)(x)
