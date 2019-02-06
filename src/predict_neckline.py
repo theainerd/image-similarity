@@ -204,7 +204,7 @@ predictions = Dense(no_of_classes, activation='softmax')(x)
 model = Model(input=base_model.input, output=predictions)
 model.compile(optimizer=Adam(0.001), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
-filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
+filepath= output_models_dir + experiment_name + "_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint]
 model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=138,validation_steps = 35, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
