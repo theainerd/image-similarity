@@ -52,8 +52,8 @@ data_dir = "../data/sleeve_len_balanced/"
 output_models_dir = "../models/label_sleevelen_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "label_pattern_xception"
-img_width, img_height = 299,299
+experiment_name = "label_pattern_nasnet"
+img_width, img_height = 331,331
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_bottleneck.h5'
 validate_images = True
@@ -186,7 +186,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = Xception(include_top=False, weights='imagenet')
+base_model = NASNetLarge(include_top=False, weights='imagenet')
 
 for layer in base_model.layers:
     layer.trainable = False
