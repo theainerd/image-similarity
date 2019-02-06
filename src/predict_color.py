@@ -28,6 +28,7 @@ import pickle
 import glob
 import os
 from PIL import Image
+from attention_module import attach_attention_module
 
 from keras import backend as K
 import tensorflow as tf
@@ -44,7 +45,7 @@ import pandas as pd
 
 
 #configurations
-
+attention_module = 'cbam_block'
 epochs = 20
 batch_size = 128
 dropout = 0.5
@@ -57,11 +58,6 @@ img_width, img_height = 331,331
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_bottleneck_final.h5'
 validate_images = True
-
-
-traindf = pd.read_csv("../data/color_balanced.csv")
-traindf = traindf[['_id','color']]
-
 no_of_classes = 8
 
 # class_weight = class_weight.compute_class_weight('balanced',
@@ -213,11 +209,11 @@ for layer in base_model.layers:
 # color attribute layer
 
 color_attribute = base_model.output
+color_attribute = attach_attention_module(x, attention_module)
 color_attribute = GlobalAveragePooling2D()(color_attribute)
 # let's add a fully-connected layer
 color_attribute = Dropout(dropout)(color_attribute)
 color_attribute = Dense(1024, activation='relu',name = "attribute_color")(color_attribute)
-color_attribute = Dropout(dropout)(color_attribute)
 predictions_color = Dense(no_of_classes,activation = 'softmax',name="predictions_color")(color_attribute)
 
 model = Model(inputs=base_model.input, outputs = predictions_color)
