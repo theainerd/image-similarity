@@ -44,7 +44,7 @@ import pandas as pd
 
 
 #configurations
-no_of_classes = 6
+no_of_classes = 3
 epochs = 50
 batch_size = 64
 dropout = 0.5
