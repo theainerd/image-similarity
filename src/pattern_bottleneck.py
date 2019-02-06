@@ -31,6 +31,7 @@ from PIL import Image
 
 from keras import backend as K
 import tensorflow as tf
+from attention_module import attach_attention_module
 
 import os
 from keras.preprocessing import image
@@ -44,6 +45,7 @@ import pandas as pd
 
 
 #configurations
+attention_module = 'cbam'
 no_of_classes = 6
 epochs = 50
 batch_size = 64
@@ -52,23 +54,11 @@ data_dir = "../data/pattern_balanced_split/"
 output_models_dir = "../models/label_pattern_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "label_pattern_NASnet"
+experiment_name = "label_pattern_attention_inception"
 img_width, img_height = 331,331
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_xception_bottleneck.h5'
 validate_images = True
-
-traindf = pd.read_csv("../data/pattern_balanced.csv")
-traindf = traindf[['_id','pattern']]
-traindf = traindf[traindf.pattern != "geometric"]
-traindf = traindf[traindf.pattern != "fotoprint"]
-traindf = traindf[traindf.pattern != "paisley"]
-traindf = traindf[traindf.pattern != "stud"]
-traindf = traindf[traindf.pattern != "rivets"]
-traindf = traindf[traindf.pattern != "pinstripe"]
-traindf = traindf[traindf.pattern != "flounce"]
-traindf = traindf[traindf.pattern != "gemstones"]
-
 
 if validate_images:
     i = 0
@@ -198,7 +188,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = ResNet50(include_top=False, weights='imagenet')
+base_model = InceptionV3(include_top=False, weights='imagenet')
 
 for layer in base_model.layers:
     layer.trainable = False
@@ -206,10 +196,11 @@ for layer in base_model.layers:
 # get layers and add average pooling layer
 ## set model architechture
 x = base_model.output
-x = GlobalAveragePooling2D()(x)
+x = attach_attention_module(x, attention_module)
+# x = GlobalAveragePooling2D()(x)
 x = Dropout(dropout)(x)
 x = Dense(1024, activation='relu')(x)
-x = Dropout(dropout)(x)
+# x = Dropout(dropout)(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
 
 model = Model(input=base_model.input, output=predictions)

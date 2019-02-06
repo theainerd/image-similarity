@@ -24,6 +24,7 @@ import pickle
 import glob
 import os
 from PIL import Image
+from attention_module import attach_attention_module
 
 from keras import backend as K
 import tensorflow as tf
@@ -48,11 +49,12 @@ data_dir = "../data/pattern_balanced_split/"
 output_models_dir = "../models/label_pattern_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "label_pattern"
+experiment_name = "label_pattern_attention_inception"
 img_width, img_height = 299, 299
 original_img_width, original_img_height = 400, 400
-final_model_name = experiment_name + '_inceptionv3_new_bottleneck_final.h5'
+final_model_name = experiment_name + '_new_bottleneck_final.h5'
 validate_images = True
+attention_module = 'cbam'
 
 traindf = pd.read_csv("../data/pattern_balanced.csv")
 traindf = traindf[['_id','pattern']]
@@ -214,7 +216,10 @@ for layer in base_model.layers:
 
 # pattern attribute layer
 
+
+
 pattern_attribute = base_model.output
+pattern_attribute = attach_attention_module(pattern_attribute, attention_module)
 pattern_attribute = GlobalAveragePooling2D()(pattern_attribute)
 # let's add a fully-connected layer
 pattern_attribute = Dropout(dropout)(pattern_attribute)
@@ -233,7 +238,7 @@ model = Model(inputs=base_model.input, outputs = predictions_pattern)
 
 model.compile(optimizer = 'rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
-filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
+filepath= output_models_dir + experiment_name + "_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint, lr_reducer,lr_scheduler]
 model.fit_generator(train_generator, epochs = epochs, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
