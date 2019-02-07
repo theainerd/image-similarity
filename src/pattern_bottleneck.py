@@ -22,7 +22,6 @@ from keras.regularizers import l2
 from keras.applications.resnet50 import preprocess_input
 from keras.applications.resnet50 import ResNet50
 from keras.models import Model
-from keras.callbacks import ModelCheckpoint,ReduceLROnPlateau
 from keras.regularizers import l2
 import pickle
 import glob
@@ -38,7 +37,7 @@ import os
 from keras.preprocessing import image
 from PIL import Image
 import numpy as np
-from keras.callbacks import Callback,ReduceLROnPlateau
+from keras.callbacks import Callback,ReduceLROnPlateau,LearningRateScheduler
 from keras.preprocessing.image import img_to_array
 from keras.applications import imagenet_utils
 from sklearn.utils import class_weight
