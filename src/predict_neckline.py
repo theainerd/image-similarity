@@ -28,6 +28,8 @@ import pickle
 import glob
 import os
 from PIL import Image
+from utils import lr_schedule
+
 
 from keras import backend as K
 import tensorflow as tf
@@ -189,7 +191,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(include_top=False, weights='imagenet')
+base_model = Xception(include_top=False, weights='imagenet')
 
 for layer in base_model.layers:
     layer.trainable = False
@@ -203,11 +205,18 @@ x = Dropout(dropout)(x)
 x = Dense(1024, activation='relu')(x)
 predictions = Dense(no_of_classes, activation='softmax')(x)
 
+lr_scheduler = LearningRateScheduler(lr_schedule)
+lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
+                               cooldown=0,
+                               patience=2,
+                               min_lr=0.5e-6)
+
+
 model = Model(input=base_model.input, output=predictions)
-model.compile(optimizer=Adam(0.001), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
+model.compile(optimizer=Adam(lr_schedule(0)), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
 filepath= output_models_dir + experiment_name + "_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint]
+checkpoints =[checkpoint,lr_scheduler,lr_reducer]
 model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=138,validation_steps = 35, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
