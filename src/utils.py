@@ -19,5 +19,5 @@ def lr_schedule(epoch):
     #     lr *= 1e-2
     # elif epoch > 4:
     #     lr *= 1e-1
-    # print('Learning rate: ', lr)
+    print('Learning rate: ', lr)
     return lr
