@@ -210,7 +210,7 @@ for layer in base_model.layers:
 # gender attribute layer
 
 gender_attribute = base_model.output
-gender_attribute = attach_attention_module(x, attention_module)
+gender_attribute = attach_attention_module(gender_attribute, attention_module)
 gender_attribute = GlobalAveragePooling2D()(gender_attribute)
 # let's add a fully-connected layer
 gender_attribute = Dropout(dropout)(gender_attribute)
