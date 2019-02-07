@@ -54,7 +54,7 @@ data_dir = "../data/gender_balanced_split/"
 output_models_dir = "../models/label_gender_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "bottleneck_gender_nasnet"
+experiment_name = "bottleneck_gender_attention_inceptionv3"
 img_width, img_height = 331, 331
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_nasnet_bottleneck.h5'
@@ -193,7 +193,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = NASNetLarge(weights = 'imagenet',include_top=False)
+base_model = InceptionV3(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
@@ -233,7 +233,7 @@ lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
 
 model.compile(optimizer = Adam(lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
 
-filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
+filepath= output_models_dir + experiment_name + "_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 checkpoints =[checkpoint,lr_scheduler,lr_reducer]
 model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=664,validation_steps = 250, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
