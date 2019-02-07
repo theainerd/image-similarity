@@ -22,7 +22,7 @@ from keras.regularizers import l2
 from keras.applications.resnet50 import preprocess_input
 from keras.applications.resnet50 import ResNet50
 from keras.models import Model
-from keras.callbacks import ModelCheckpoint,ReduceLROnPlateau
+from keras.callbacks import ModelCheckpoint,ReduceLROnPlateau,LearningRateScheduler
 from keras.regularizers import l2
 import pickle
 import glob
