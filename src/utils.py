@@ -12,12 +12,12 @@ def lr_schedule(epoch):
     """
     lr = 1e-3
     if epoch > 1:
-        lr *= 0.5e-3
-    elif epoch > 2:
-        lr *= 1e-3
-    elif epoch > 3:
-        lr *= 1e-2
-    elif epoch > 4:
-        lr *= 1e-1
-    print('Learning rate: ', lr)
+        lr = 0.0001
+    # elif epoch > 2:
+    #     lr *= 1e-3
+    # elif epoch > 3:
+    #     lr *= 1e-2
+    # elif epoch > 4:
+    #     lr *= 1e-1
+    # print('Learning rate: ', lr)
     return lr
