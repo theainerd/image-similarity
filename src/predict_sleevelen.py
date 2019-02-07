@@ -32,6 +32,7 @@ from PIL import Image
 from keras import backend as K
 import tensorflow as tf
 from attention_module import attach_attention_module
+from utils import lr_schedule
 
 import os
 from keras.preprocessing import image
