@@ -54,7 +54,7 @@ data_dir = "../data/gender_balanced_split/"
 output_models_dir = "../models/label_gender_bottleneck/"
 train_data_dir  = data_dir + 'train'
 validation_data_dir = data_dir + 'validation'
-experiment_name = "bottleneck_gender_attention_inceptionv3"
+experiment_name = "bottleneck_gender_attention_xception"
 img_width, img_height = 331, 331
 original_img_width, original_img_height = 400, 400
 final_model_name = experiment_name + '_nasnet_bottleneck.h5'
@@ -193,7 +193,7 @@ print(class_weight)
 
 print("Downloading Base Model.....")
 
-base_model = InceptionV3(weights = 'imagenet',include_top=False)
+base_model = Xception(weights = 'imagenet',include_top=False)
 
 # for layer in model.layers[:172]:
 #    layer.trainable = False
