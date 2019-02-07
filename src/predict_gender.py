@@ -28,6 +28,8 @@ import pickle
 import glob
 import os
 from PIL import Image
+from attention_module import attach_attention_module
+from utils import lr_schedule
 
 from keras import backend as K
 import tensorflow as tf
@@ -44,7 +46,7 @@ import pandas as pd
 
 
 #configurations
-
+attention_module = 'cbam_block'
 epochs = 50
 batch_size = 64
 dropout = 0.5
@@ -208,6 +210,7 @@ for layer in base_model.layers:
 # gender attribute layer
 
 gender_attribute = base_model.output
+gender_attribute = attach_attention_module(x, attention_module)
 gender_attribute = GlobalAveragePooling2D()(gender_attribute)
 # let's add a fully-connected layer
 gender_attribute = Dropout(dropout)(gender_attribute)
@@ -216,6 +219,11 @@ predictions_gender = Dense(no_of_classes,activation = 'softmax',name="prediction
 
 model = Model(inputs=base_model.input, outputs = predictions_gender)
 
+lr_scheduler = LearningRateScheduler(lr_schedule)
+lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
+                               cooldown=0,
+                               patience=2,
+                               min_lr=0.5e-6)
 
 # model.load_weights("../models/label_gender/label_gender_inceptionv3_41_0.37.h5")
 # print ("Checkpoint loaded.")
@@ -223,10 +231,10 @@ model = Model(inputs=base_model.input, outputs = predictions_gender)
 
 # this is the model we will train
 
-model.compile(optimizer = 'rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = Adam(lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
 
 filepath= output_models_dir + experiment_name + "_inceptionv3_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-checkpoints =[checkpoint]
+checkpoints =[checkpoint,lr_scheduler,lr_reducer]
 model.fit_generator(train_generator, epochs = epochs,steps_per_epoch=664,validation_steps = 250, validation_data=validation_generator,class_weight = class_weight, callbacks=checkpoints)
 model.save(final_model_name)
