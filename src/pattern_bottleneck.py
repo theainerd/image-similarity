@@ -210,7 +210,7 @@ lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                min_lr=0.5e-6)
 
 model = Model(input=base_model.input, output=predictions)
-model.compile(optimizer=Adam(lr_scheduler), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
+model.compile(optimizer=Adam(lr_scheduler(0)), loss = 'categorical_crossentropy', metrics = ['categorical_accuracy', 'accuracy'])
 
 filepath= output_models_dir + experiment_name + "_{epoch:02d}_{val_acc:.2f}.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
